@@ -18,28 +18,18 @@ namespace TestBot.Controllers
         /// Receive a message from a user and reply to it
         /// </summary>
         [HttpPost]
-        public async Task<HttpResponseMessage> Post([FromBody]Activity activity)
+        public virtual async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
-  
-            if (activity?.Type == ActivityTypes.Message)
+            // Check if activity is of type message
+            if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
             {
-
-                //if (ActivityTypes.Message.Contains("Repeat after me"))
-                //{
-                //    await Conversation.SendAsync(activity, () => new EchoDialog());
-                //}
-                //else
-                await Conversation.SendAsync(activity, () => new RootDialog());
-
-                await Conversation.SendAsync(activity, () => new EchoDialog());
-
+                    await Conversation.SendAsync(activity, () => new RootDialog());
             }
             else
             {
                 HandleSystemMessage(activity);
             }
-
-            return new HttpResponseMessage(HttpStatusCode.OK);
+            return new HttpResponseMessage(System.Net.HttpStatusCode.Accepted);
         }
 
         private Activity HandleSystemMessage(Activity message)
@@ -66,25 +56,11 @@ namespace TestBot.Controllers
             }
             else if (message.Type == ActivityTypes.Ping)
             {
-
+                var response ="ping";
+                Console.WriteLine(response);
             }
 
             return null;
-        }
-        [Serializable]
-        public class EchoDialog : IDialog<object>
-        {
-            public async Task StartAsync(IDialogContext context)
-            {
-                context.Wait(MessageReceivedAsync);
-            }
-
-            public async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
-            {
-                var message = await argument;
-                await context.PostAsync("You said: " + message.Text);
-                context.Wait(MessageReceivedAsync);
-            }
         }
     }
 }
