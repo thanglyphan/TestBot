@@ -30,9 +30,6 @@ namespace TestBot.Controllers
                 //}
                 //else
                 await Conversation.SendAsync(activity, () => new RootDialog());
-
-                await Conversation.SendAsync(activity, () => new EchoDialog());
-
             }
             else
             {

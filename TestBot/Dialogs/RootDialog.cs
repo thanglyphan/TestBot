@@ -20,7 +20,8 @@ namespace TestBot.Dialogs
 
             // calculate something for us to return
             int length = (activity.Text ?? string.Empty).Length;
-
+            Networking api = new Networking();
+            api.ConnectToWit(activity.Text);
             // return our reply to the user
             await context.PostAsync($"You sent '{activity.Text}' which IIIIS {length} characters");
             context.Wait(MessageReceivedAsync);
