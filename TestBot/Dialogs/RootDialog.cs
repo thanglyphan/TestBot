@@ -31,7 +31,9 @@ namespace TestBot.Dialogs
             }
             var activity = await result as Activity;
             int length = (activity.Text ?? string.Empty).Length;
-            await context.PostAsync($"You sent '{activity.Text}' which was {length} characters long.");
+			Networking api = new Networking();
+            api.ConnectToWit(activity.Text);            
+			await context.PostAsync($"You sent '{activity.Text}' which was {length} characters long.");
             context.Wait(MessageReceivedAsync);
         }
 
