@@ -3,6 +3,10 @@ using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
 using System.Threading;
+using System.Linq;
+using System.Web.Script.Serialization;
+using TestBot.ObjectsFromWit;
+using Newtonsoft.Json;
 
 namespace TestBot.Dialogs
 {
@@ -17,38 +21,56 @@ namespace TestBot.Dialogs
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-
             var message = await result;
-            if (message.Text.ToLower().Contains("repeat after me") || message.Text.ToLower().Contains("gjenta etter meg")) 
+
+            //if (ContainsGreeting(message.Text)) { }
+
+            if (message.Text.ToLower().Contains("repeat after me") || message.Text.ToLower().Contains("gjenta etter meg"))
             {
-                await context.Forward(new EchoDialog() , this.EchoDialogResumeAfter, message, CancellationToken.None);
-                context.Wait(this.MessageReceivedAsync);
+                context.Call<object>(new EchoDialog(), this.ResumeAfterChildDialog);
             }
-            else if (message.Text.ToLower().Contains("bender"))
+            else if (message.Text.ToLower() == "picture")
             {
-                await context.Forward(new ImageDialog(), this.ImageDialogResumeAfter, message, CancellationToken.None);
-                context.Wait(this.MessageReceivedAsync);
+                context.Call<object>(new ImageDialog(), this.ResumeAfterChildDialog);
             }
-            var activity = await result as Activity;
-            int length = (activity.Text ?? string.Empty).Length;
-			Networking api = new Networking();
-            api.ConnectToWit(activity.Text);            
-			await context.PostAsync($"You sent '{activity.Text}' which was {length} characters long.");
-            context.Wait(MessageReceivedAsync);
+            else
+            {
+                var activity = await result as Activity;
+                int length = (activity.Text ?? string.Empty).Length;
+                Networking api = new Networking();
+                api.ConnectToWit(activity.Text);
+                Locations location = new Locations(api.response);
+
+                foreach (var item in location.data.entities.intent)
+                {
+                    await context.PostAsync("Intent: " + item.value + ". Confidence: " + item.confidence);
+                    if (item.value.ToLower() == "hilsen")
+                    {
+                        await context.PostAsync("Hello, my name is TechBot. How can I help you?");
+
+                    }
+                }
+                //foreach (var item in location.data.entities.lol)
+                //{
+                //    await context.PostAsync("Entity: " + item.value + ". Confidence: " + item.confidence);
+                //}
+                context.Wait(MessageReceivedAsync);
+            }
         }
 
-        private async Task EchoDialogResumeAfter(IDialogContext context, IAwaitable<string> result)
+        private async Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
-            var message = await result;
-            await context.PostAsync("You made the bot mimic your sentence, way to go!");
             context.Wait(this.MessageReceivedAsync);
         }
-
-        private async Task ImageDialogResumeAfter(IDialogContext context, IAwaitable<object> result)
+        public bool ContainsGreeting(string result)
         {
-            var message = await result;
-            await context.PostAsync("Would you like me to find another, just type 'GIF' OR 'GIPHY'.");
-            context.Wait(this.MessageReceivedAsync);
+            var message = result;
+            bool isGreeting = false;
+            string[] greetings = new string[] { "hello", "hi", "greetings", "hey", "hei", "hallo", "halla", "yo", "heisann" };
+
+            if (greetings.Any(message.ToLower().Contains))
+                isGreeting = true;
+            return isGreeting;
         }
     }
 }

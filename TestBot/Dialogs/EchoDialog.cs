@@ -9,49 +9,49 @@ using System.Threading.Tasks;
 namespace TestBot.Dialogs
 {
     [Serializable]
-    public class EchoDialog : IDialog<string>
+    public class EchoDialog : IDialog<object>
     {
         protected int count = 1;
 
         public async Task StartAsync(IDialogContext context)
         {
+            await context.PostAsync("I will repeat what you say until you tell me to 'stop repeating'.");
             context.Wait(MessageReceivedAsync);
         }
 
         public async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> argument)
         {
             var message = await argument;
-            if (message.Text.Contains("reset"))
+            if (message.Text.Contains("stop repeating"))
             {
                 PromptDialog.Confirm(
                     context,
-                    AfterResetAsync,
-                    "Are you sure you want to reset the count?",
+                    AfterRepeatAsync,
+                    "Are you sure you want me to stop repeating?",
                     "Didn't get that!",
                     promptStyle: PromptStyle.None);
             }
             else
             {
-                int length = ("repeat after me").Length;
-                var repeat = message.Text.Remove(0, length);
-                await context.PostAsync($"{this.count++}: {repeat}");
-                context.Done(repeat);
+                await context.PostAsync(message.Text);
+                context.Wait(MessageReceivedAsync);
             }
         }
 
-        public async Task AfterResetAsync(IDialogContext context, IAwaitable<bool> argument)
+        public async Task AfterRepeatAsync(IDialogContext context, IAwaitable<bool> argument)
         {
             var confirm = await argument;
             if (confirm)
             {
                 this.count = 1;
-                await context.PostAsync("Reset count.");
+                await context.PostAsync("Stopping repeat.");
+                context.Done<object>(new Object());
             }
             else
             {
-                await context.PostAsync("Did not reset count.");
+                await context.PostAsync("Will continue to repeat.");
+                context.Wait(MessageReceivedAsync);
             }
-            context.Done(confirm);
         }
     }
 }
