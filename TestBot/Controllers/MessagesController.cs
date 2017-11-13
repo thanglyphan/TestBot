@@ -1,5 +1,4 @@
-﻿using System.Net;
-using System.Net.Http;
+﻿using System.Net.Http;
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
@@ -16,6 +15,7 @@ namespace TestBot.Controllers
         [HttpPost]
         public virtual async Task<HttpResponseMessage> Post([FromBody] Activity activity)
         {
+            ConnectorClient connector = new ConnectorClient(new Uri(activity.ServiceUrl));
             if (activity != null && activity.GetActivityType() == ActivityTypes.Message)
             {
                     await Conversation.SendAsync(activity, () => new RootDialog());
@@ -54,7 +54,6 @@ namespace TestBot.Controllers
                 var response ="ping";
                 Console.WriteLine(response);
             }
-
             return null;
         }
     }
