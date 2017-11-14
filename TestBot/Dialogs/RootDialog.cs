@@ -77,7 +77,7 @@ namespace TestBot.Dialogs
             actions.Add(pictureButton);
             actions.Add(wikiButton);
 
-            var card = CreateThumbnailCard("Hjelp", "Hva sliter du med?","text", images, actions);
+            var card = CreateThumbnailCard("Hjelp", "Hva sliter du med?", "text", images, actions);
             var attachment = ComposeAttachment(card, ThumbnailCard.ContentType);
             var reply = context.MakeMessage();
             reply.Attachments.Add(attachment);
@@ -86,17 +86,14 @@ namespace TestBot.Dialogs
         }
 
         public CardImage CreateImage(string url, string alt)
-        {
-            return new CardImage()
+            => new CardImage()
             {
                 Url = url,
                 Alt = alt
             };
-        }
 
         public CardAction CreateButton(string type, string title, object value, string text, string displayText)
-        {
-            return new CardAction()
+            => new CardAction()
             {
                 Type = type,
                 Title = title,
@@ -104,28 +101,22 @@ namespace TestBot.Dialogs
                 Text = text,
                 DisplayText = displayText
             };
-        }
 
         public ThumbnailCard CreateThumbnailCard(string title, string subtitle, string text, List<CardImage> images, List<CardAction> actions)
+        => new ThumbnailCard()
         {
-            return new ThumbnailCard()
-            {
-                Title = title,
-                Subtitle = subtitle,
-                Text = text,
-                Images = images,
-                Buttons = actions
-            };
-        }
+            Title = title,
+            Subtitle = subtitle,
+            Text = text,
+            Images = images,
+            Buttons = actions
+        };
 
         public Attachment ComposeAttachment(ThumbnailCard card, string contentType)
-        {
-            Attachment attachment = new Attachment()
+            => new Attachment()
             {
                 ContentType = contentType,
                 Content = card
             };
-            return attachment;
-        }
     }
 }
