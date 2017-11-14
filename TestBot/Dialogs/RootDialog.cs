@@ -70,21 +70,21 @@ namespace TestBot.Dialogs
         {
             var images = new List<CardImage>();
             var actions = new List<CardAction>();
-            var button = createButton("openUrl", "CVer", @"S:\Creuna internt\CV og maler\CV\CVer ORGANISERT PER ANSATT", "ButtonText", "DisplayText");
-            actions.Add(button);
+            var pictureButton = CreateButton("openUrl", "GitBot", @"https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "ButtonText", "DisplayText");
+            var wikiButton = CreateButton("openUrl", "Wikipedia", @"https://en.wikipedia.org/wiki/Google_Assistant", "ButtonText", "DisplayText");
+            actions.Add(pictureButton);
+            actions.Add(wikiButton);
 
             var card = CreateThumbnailCard("Hjelp", "Hva sliter du med?","text", images, actions);
             var attachment = ComposeAttachment(card, ThumbnailCard.ContentType);
-
             var reply = context.MakeMessage();
             reply.Attachments.Add(attachment);
             await context.PostAsync(reply, cancellationToken: CancellationToken.None);
             context.Wait(MessageReceivedAsync);
         }
 
-        public CardAction createButton(string type, string title, object value, string text, string displayText)
+        public CardAction CreateButton(string type, string title, object value, string text, string displayText)
         {
-
             return new CardAction()
             {
                 Type = type,
@@ -105,18 +105,6 @@ namespace TestBot.Dialogs
                 Images = images,
                 Buttons = actions
             };
-        }
-
-        public ThumbnailCard MakeThumbnailCard()
-        {
-            ThumbnailCard card = new ThumbnailCard()
-            {
-                Title = "Thumbnail card.",
-                Subtitle = "Wiki",
-                Images = new List<CardImage>(),
-                Buttons = new List<CardAction>()
-            };
-            return card;
         }
 
         public Attachment ComposeAttachment(ThumbnailCard card, string contentType)
