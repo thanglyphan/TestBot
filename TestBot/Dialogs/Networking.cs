@@ -17,7 +17,6 @@ namespace TestBot.Dialogs
         {
             string URL = $"https://api.wit.ai/message?v={DateTime.Now.Day}.{DateTime.Now.Month}.{DateTime.Now.Year}&q={message}";
             Console.WriteLine(URL);
-            //THANG string accessToken = "HIRXY32E3OLB6JVRFXNDCUMNU3MB55BN";
             string accessToken = "YHOYLGOGY2ZF2ONV465TXJDD4RBL5OC2";
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(URL);
             request.Method = "POST";

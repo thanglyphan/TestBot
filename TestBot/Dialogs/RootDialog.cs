@@ -2,8 +2,9 @@
 using System.Threading.Tasks;
 using Microsoft.Bot.Builder.Dialogs;
 using Microsoft.Bot.Connector;
-using System.Linq;
 using TestBot.ObjectsFromWit;
+using System.Collections.Generic;
+using System.Threading;
 
 namespace TestBot.Dialogs
 {
@@ -19,52 +20,93 @@ namespace TestBot.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var message = await result;
-
-
-            if (message.Text.ToLower().Contains("repeat after me") || message.Text.ToLower().Contains("gjenta etter meg"))
+            var activity = await result as Activity;
+            if (message.Text.ToLower().Contains("hjelp"))
             {
-                context.Call<object>(new EchoDialog(), this.ResumeAfterChildDialog);
+                await ShowOptionsAsync(context);
             }
-            else if (message.Text.ToLower() == "picture")
+            Networking api = new Networking();
+            api.ConnectToWit(activity.Text);
+            WitObjectStructure witObjectStructure = new WitObjectStructure(api.response);
+
+            var messageIntent = witObjectStructure.data.entities.intent;
+            if (messageIntent == null)
             {
-                context.Call<object>(new ImageDialog(), this.ResumeAfterChildDialog);
+                await context.PostAsync("Jeg forstår ikke hva du vil. Kan du omformulere spørsmålet?");
             }
             else
             {
-                var activity = await result as Activity;
-                int length = (activity.Text ?? string.Empty).Length;
-                Networking api = new Networking();
-                api.ConnectToWit(activity.Text);
-
-
-                WitObjectStructure witObjectStructure = new WitObjectStructure(api.response);
-
-                if(witObjectStructure.data.entities.intent == null)
+                foreach (var item in witObjectStructure.data.entities.intent)
                 {
-                    await context.PostAsync("Jeg forstår ikke hva du vil. Kan du omformulere spørsmålet?");
+                    if (item.value.ToLower() == "hilsen")
+                    {
+                        await context.PostAsync("Hei, mitt navn er CreunaBot, hva kan jeg hjelpe deg med?");
+                    }
+                    else if (item.value.ToLower() == "plassering")
+                    {
+                        Console.WriteLine("plassering");
+                    }
+                    else if (item.value.ToLower() == "tidspunkt")
+                    {
+                        foreach (var TING in witObjectStructure.data.entities.okonomi)
+                        {
+                            if (TING.value.ToLower() == "lønn")
+                            {
+                                context.Call<Object>(new EconomyDialog(), this.ResumeAfterChildDialog);
+                            }
+                        }
+                        Console.WriteLine("tidspunkt");
+                    }
+                    else
+                        context.Wait(MessageReceivedAsync);
                 }
-                else
-                //foreach (var item in witObjectStructure.data.entities.intent)
-                //{
-                //    await context.PostAsync("Intent: " + item.value + ". Confidence: " + item.confidence);
-                //    if (item.value.ToLower() == "hilsen")
-                //    {
-                //        await context.PostAsync("Hello, my name is TechBot. How can I help you?");
 
-                //    }
-                //}
-                //foreach (var item in witObjectStructure.data.entities.organisasjon)
-                //{
-                //    await context.PostAsync("Entity: " + location.data.entities.organisasjon.ToString() + ". Keyword: " + item.value + ". Confidence: " + item.confidence);
-                //}
-
-                context.Wait(MessageReceivedAsync);
             }
+            //if (message.Text.ToLower().Contains("repeat after me") || message.Text.ToLower().Contains("gjenta etter meg"))
+            //{
+            //    context.Call<object>(new EchoDialog(), this.ResumeAfterChildDialog);
+            //}
+            //else if (message.Text.ToLower() == "picture")
+            //{
+            //    context.Call<object>(new ImageDialog(), this.ResumeAfterChildDialog);
+            //}
         }
-
         private async Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
             context.Wait(this.MessageReceivedAsync);
+        }
+
+        private async Task ShowOptionsAsync(IDialogContext context)
+        {
+            var card = makeThumbnailCard();
+            var attachment = composeAttachment(card, ThumbnailCard.ContentType);
+
+            var reply = context.MakeMessage();
+            reply.Attachments.Add(attachment);
+            await context.PostAsync(reply, cancellationToken: CancellationToken.None);
+            context.Wait(MessageReceivedAsync);
+        }
+
+        public ThumbnailCard makeThumbnailCard()
+        {
+            ThumbnailCard card = new ThumbnailCard()
+            {
+                Title = "Thumbnail card.",
+                Subtitle = "Wiki",
+                Images = new List<CardImage>(),
+                Buttons = new List<CardAction>()
+            };
+            return card;
+        }
+        
+        public Attachment composeAttachment(ThumbnailCard card, string contentType)
+        {
+            Attachment attachment = new Attachment()
+            {
+                ContentType = contentType,
+                Content = card
+            };
+            return attachment;
         }
     }
 }
