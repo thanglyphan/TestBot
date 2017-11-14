@@ -73,8 +73,8 @@ namespace TestBot.Dialogs
             var button = createButton("openUrl", "CVer", @"S:\Creuna internt\CV og maler\CV\CVer ORGANISERT PER ANSATT", "ButtonText", "DisplayText");
             actions.Add(button);
 
-            var card = createThumbnailCard("Hjelp", "Hva sliter du med?","text", images, actions);
-            var attachment = composeAttachment(card, ThumbnailCard.ContentType);
+            var card = CreateThumbnailCard("Hjelp", "Hva sliter du med?","text", images, actions);
+            var attachment = ComposeAttachment(card, ThumbnailCard.ContentType);
 
             var reply = context.MakeMessage();
             reply.Attachments.Add(attachment);
@@ -95,7 +95,7 @@ namespace TestBot.Dialogs
             };
         }
 
-        public ThumbnailCard createThumbnailCard(string title, string subtitle, string text, List<CardImage> images, List<CardAction> actions)
+        public ThumbnailCard CreateThumbnailCard(string title, string subtitle, string text, List<CardImage> images, List<CardAction> actions)
         {
             return new ThumbnailCard()
             {
@@ -107,7 +107,7 @@ namespace TestBot.Dialogs
             };
         }
 
-        public ThumbnailCard makeThumbnailCard()
+        public ThumbnailCard MakeThumbnailCard()
         {
             ThumbnailCard card = new ThumbnailCard()
             {
