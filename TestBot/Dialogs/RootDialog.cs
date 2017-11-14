@@ -44,33 +44,23 @@ namespace TestBot.Dialogs
                     }
                     else if (item.value.ToLower() == "plassering")
                     {
-                        Console.WriteLine("plassering");
                     }
                     else if (item.value.ToLower() == "tidspunkt")
                     {
-                        foreach (var TING in witObjectStructure.data.entities.okonomi)
+                        foreach (var entity in witObjectStructure.data.entities.okonomi)
                         {
-                            if (TING.value.ToLower() == "lønn")
+                            if (entity.value.ToLower() == "lønn")
                             {
                                 context.Call<Object>(new EconomyDialog(), this.ResumeAfterChildDialog);
                             }
                         }
-                        Console.WriteLine("tidspunkt");
                     }
                     else
                         context.Wait(MessageReceivedAsync);
                 }
-
             }
-            //if (message.Text.ToLower().Contains("repeat after me") || message.Text.ToLower().Contains("gjenta etter meg"))
-            //{
-            //    context.Call<object>(new EchoDialog(), this.ResumeAfterChildDialog);
-            //}
-            //else if (message.Text.ToLower() == "picture")
-            //{
-            //    context.Call<object>(new ImageDialog(), this.ResumeAfterChildDialog);
-            //}
         }
+
         private async Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
             context.Wait(this.MessageReceivedAsync);
@@ -128,8 +118,8 @@ namespace TestBot.Dialogs
             };
             return card;
         }
-        
-        public Attachment composeAttachment(ThumbnailCard card, string contentType)
+
+        public Attachment ComposeAttachment(ThumbnailCard card, string contentType)
         {
             Attachment attachment = new Attachment()
             {
