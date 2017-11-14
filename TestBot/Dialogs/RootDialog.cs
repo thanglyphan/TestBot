@@ -70,8 +70,10 @@ namespace TestBot.Dialogs
         {
             var images = new List<CardImage>();
             var actions = new List<CardAction>();
-            var pictureButton = CreateButton("openUrl", "GitBot", @"https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "ButtonText", "DisplayText");
-            var wikiButton = CreateButton("openUrl", "Wikipedia", @"https://en.wikipedia.org/wiki/Google_Assistant", "ButtonText", "DisplayText");
+            var thumbnailImage = CreateImage("https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "nice picture of a bot");
+            var pictureButton = CreateButton("openUrl", "GitBot", "https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "ButtonText", "DisplayText");
+            var wikiButton = CreateButton("openUrl", "Wikipedia", "https://en.wikipedia.org/wiki/Google_Assistant", "ButtonText", "DisplayText");
+            images.Add(thumbnailImage);
             actions.Add(pictureButton);
             actions.Add(wikiButton);
 
@@ -81,6 +83,15 @@ namespace TestBot.Dialogs
             reply.Attachments.Add(attachment);
             await context.PostAsync(reply, cancellationToken: CancellationToken.None);
             context.Wait(MessageReceivedAsync);
+        }
+
+        public CardImage CreateImage(string url, string alt)
+        {
+            return new CardImage()
+            {
+                Url = url,
+                Alt = alt
+            };
         }
 
         public CardAction CreateButton(string type, string title, object value, string text, string displayText)
