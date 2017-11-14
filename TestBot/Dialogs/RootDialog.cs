@@ -68,35 +68,55 @@ namespace TestBot.Dialogs
 
         private async Task ShowOptionsAsync(IDialogContext context)
         {
-            var card = MakeThumbnailCard();
-            var attachment = ComposeAttachment(card, ThumbnailCard.ContentType);
+            var images = new List<CardImage>();
+            var actions = new List<CardAction>();
+            var thumbnailImage = CreateImage("https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "nice picture of a bot");
+            var pictureButton = CreateButton("openUrl", "GitBot", "https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "ButtonText", "DisplayText");
+            var wikiButton = CreateButton("openUrl", "Wikipedia", "https://en.wikipedia.org/wiki/Google_Assistant", "ButtonText", "DisplayText");
+            images.Add(thumbnailImage);
+            actions.Add(pictureButton);
+            actions.Add(wikiButton);
 
+            var card = CreateThumbnailCard("Hjelp", "Hva sliter du med?", "text", images, actions);
+            var attachment = ComposeAttachment(card, ThumbnailCard.ContentType);
             var reply = context.MakeMessage();
             reply.Attachments.Add(attachment);
             await context.PostAsync(reply, cancellationToken: CancellationToken.None);
             context.Wait(MessageReceivedAsync);
         }
 
-        public ThumbnailCard MakeThumbnailCard()
-        {
-            ThumbnailCard card = new ThumbnailCard()
+        public CardImage CreateImage(string url, string alt)
+            => new CardImage()
             {
-                Title = "Thumbnail card.",
-                Subtitle = "Wiki",
-                Images = new List<CardImage>(),
-                Buttons = new List<CardAction>()
+                Url = url,
+                Alt = alt
             };
-            return card;
-        }
+
+        public CardAction CreateButton(string type, string title, object value, string text, string displayText)
+            => new CardAction()
+            {
+                Type = type,
+                Title = title,
+                Value = value,
+                Text = text,
+                DisplayText = displayText
+            };
+
+        public ThumbnailCard CreateThumbnailCard(string title, string subtitle, string text, List<CardImage> images, List<CardAction> actions)
+        => new ThumbnailCard()
+        {
+            Title = title,
+            Subtitle = subtitle,
+            Text = text,
+            Images = images,
+            Buttons = actions
+        };
 
         public Attachment ComposeAttachment(ThumbnailCard card, string contentType)
-        {
-            Attachment attachment = new Attachment()
+            => new Attachment()
             {
                 ContentType = contentType,
                 Content = card
             };
-            return attachment;
-        }
     }
 }
