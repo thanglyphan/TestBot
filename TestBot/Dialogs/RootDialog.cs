@@ -78,13 +78,43 @@ namespace TestBot.Dialogs
 
         private async Task ShowOptionsAsync(IDialogContext context)
         {
-            var card = makeThumbnailCard();
+            var images = new List<CardImage>();
+            var actions = new List<CardAction>();
+            var button = createButton("openUrl", "CVer", @"S:\Creuna internt\CV og maler\CV\CVer ORGANISERT PER ANSATT", "ButtonText", "DisplayText");
+            actions.Add(button);
+
+            var card = createThumbnailCard("Hjelp", "Hva sliter du med?","text", images, actions);
             var attachment = composeAttachment(card, ThumbnailCard.ContentType);
 
             var reply = context.MakeMessage();
             reply.Attachments.Add(attachment);
             await context.PostAsync(reply, cancellationToken: CancellationToken.None);
             context.Wait(MessageReceivedAsync);
+        }
+
+        public CardAction createButton(string type, string title, object value, string text, string displayText)
+        {
+
+            return new CardAction()
+            {
+                Type = type,
+                Title = title,
+                Value = value,
+                Text = text,
+                DisplayText = displayText
+            };
+        }
+
+        public ThumbnailCard createThumbnailCard(string title, string subtitle, string text, List<CardImage> images, List<CardAction> actions)
+        {
+            return new ThumbnailCard()
+            {
+                Title = title,
+                Subtitle = subtitle,
+                Text = text,
+                Images = images,
+                Buttons = actions
+            };
         }
 
         public ThumbnailCard makeThumbnailCard()
