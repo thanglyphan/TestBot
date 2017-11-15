@@ -41,8 +41,16 @@ namespace TestBot.ObjectsFromWit
         public Intent[] intent { get; set; }
         public Organisasjon[] organisasjon { get; set; }
         public Okonomi[] okonomi { get; set; }
+        public Gjenstand[] gjenstand { get; set; }
     }
-
+    public class Gjenstand : CategoryBase
+    {
+        public override string Name => "Gjenstand";
+        public override string GetResponse(Intent intent)
+        {
+            return "Leter du etter en gjenstand?";
+        }
+    }
     public class Test:CategoryBase
     {
         public override string Name => "Test";
