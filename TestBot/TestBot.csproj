@@ -6,10 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="AdaptiveCardSchemas\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="AdaptiveCards" Version="1.0.0-beta06" />
     <PackageReference Include="Adfa.Bot.Builder.WitAi" Version="0.1.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.2.0-beta1" />
     <PackageReference Include="Microsoft.AspNetCore" Version="2.0.0" />
