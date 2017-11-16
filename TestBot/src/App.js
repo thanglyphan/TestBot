@@ -36,9 +36,28 @@ class App extends Component {
       <div className="App">
         <header className="App-header">
           <h1 className="App-title">Chatbot Trainer!</h1>
-          <p>Burde vel ha noe tekst her som forklarer formålet bak prosjektet og hvorfor vi trenger help til å lage spørsmål.</p>
+          <div className="desc">
+            <p> Vi er trainee gruppe A som igjennom hospitering i tech avdelingen har fått i oppgave å lage en basisløsning for chatbot.
+                Noe som vi potensielt kan selge til kunder på senere tidspunkt.
+              <br/><br/>
+                Ettersom folk generelt skriver veldig ulikt og formulerer seg anderledes er det viktig å trene en chatbot så den forstår hva en bruker ønsker, samme hvordan en person ordlegger seg.
+                Det å trene en chatbot er derfor en omfattende jobb, og vi trenger derfor deres hjelp til å formulere spørsmål.
+            </p>
+          </div>
         </header>
         <div className="mainContainer">
+          <div className="desc">
+            <p> Til å begynne med har vi bestemt oss for å trene bot'en for HR relaterte spørsmål.
+                Vi håper at noen av dere har lyst til å skrive noen spørsmål i boksen nedenfor relatert til dette.
+                Disse spørsmålene blir sendt til vår Wit.ai konto, hvor bot'en foreslår meningen bak spørsmålet og hvilken kategori spørsmålet tilhører.
+                <br/><br/>
+                Eksempel på hvordan bot'en fungerer: <br/> "Hvor <i className="intent">mange</i> <i className="category">feriedager</i> har jeg igjen?"
+                <br/><br/>
+                Bot'en identifiserer: <br/> mening: <i className="intent">antall</i><br/> kategori: <i className="category">feriedager</i>
+                <br/><br/>
+                Forslag til flere spørsmål: Adresse, ansatte, cv, sykedager, printer, åpningstider etc.
+            </p>
+          </div>
           <form className="form" onSubmit={e => this.onSubmit(e)}>
             <input
               className={`textInput ${this.state.failSubmitClass}`}

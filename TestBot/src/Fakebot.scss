@@ -7,8 +7,20 @@
 
   .header{
     width: 100%;
-    font-size: 40px;
+    font-size: 2em;
     color: white;
+  }
+
+  .fakebotDesc{
+    margin: 0 auto;
+    font-size: 1.1em;
+    color: white;
+    width: 100%;
+
+    & p{
+      max-width: 1000px;
+      margin: 0 auto;
+    }
   }
 
   .chatWindow{

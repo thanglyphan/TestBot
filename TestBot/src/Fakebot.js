@@ -15,9 +15,9 @@ export default class Fakebot extends Component {
     let tempQ = this.state.question
     let {conversation} = this.state
     conversation.push({message: this.state.question, timeStamp: this.getTimeStamp(), type: "question"})
-
     setTimeout(function() {this.getResponse(tempQ)}.bind(this), 2000)
     this.setState({question: ""})
+    this.scrollToBottomMessage()
   }
 
   getResponse(question){
@@ -63,8 +63,13 @@ export default class Fakebot extends Component {
     return(
       <div className="fakebot">
         <h2 className="header">Fakebot</h2>
+        <div className="fakebotDesc">
+          <p> Fakebot er ment for å være en demo som viser hvordan en chatbot kan fungere. 
+              Fakebot er ganske dum og forstår bare noen få spørsmål, disse finnes i listen nede til høyre.
+          </p>
+        </div>
         <div className="chat">
-          <RenderConversation conversation={this.state.conversation}/>
+          <RenderConversation conversation={this.state.conversation} scrollToBottomMessage={this.scrollToBottomMessage}/>
           <form className="inputContainer" onSubmit={event => this.handleClick(event)}>
             <input className="inputQ" onChange={event => this.setState({question: event.target.value})} value={this.state.question}/>
             <button className="submitQ">Send</button>
@@ -88,8 +93,8 @@ export default class Fakebot extends Component {
 }
 
 function RenderConversation(props){
-  const conversation = props.conversation.map((message) =>
-    <div className="messageLine"><p className={`${message.type} message`}>{message.message}<br/><small className={`${message.type} timestamp`}>{message.timeStamp}</small></p></div>
+  const conversation = props.conversation.map((message, key) =>
+    <div className="messageLine" key={key}><p className={`${message.type} message`}>{message.message}<br/><small className={`${message.type} timestamp`}>{message.timeStamp}</small></p></div>
   )
   return(
     <div className="chatWindow">{conversation} <div id="messageEnd"/></div>
