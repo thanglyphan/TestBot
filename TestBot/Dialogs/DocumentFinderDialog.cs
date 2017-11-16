@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 
 namespace TestBot.Dialogs
 {
+    [Serializable]
     public class DocumentFinderDialog : IDialog<object>
     {
         public async Task StartAsync(IDialogContext context)
         {
+            await context.PostAsync("[DocumentFinderDialog]");
             context.Wait(this.MessageReceived);
         }
         private async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> result)

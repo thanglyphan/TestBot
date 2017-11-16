@@ -10,13 +10,18 @@ namespace TestBot.Dialogs
     {
         public async Task StartAsync(IDialogContext context)
         {
+            await context.PostAsync("[EconomyDialog]");
             context.Wait(MessageReceived);
         }
 
         private async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var message = await result;
-
+            var userInput = message.Text.ToLower();
+            if (userInput.Contains("tilbake") || userInput.Contains("avbryt"))
+            {
+                context.Done<object>(new Object());
+            }
             if ((message.Text != null) && (message.Text.Trim().Length > 0))
             {
                 if (message.Text.ToLower().Contains("når"))

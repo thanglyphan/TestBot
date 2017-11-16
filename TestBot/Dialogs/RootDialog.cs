@@ -13,6 +13,7 @@ namespace TestBot.Dialogs
     {
         public Task StartAsync(IDialogContext context)
         {
+            context.PostAsync("[RootDialog]");
             context.Wait(MessageReceivedAsync);
             return Task.CompletedTask;
         }
@@ -21,14 +22,13 @@ namespace TestBot.Dialogs
         {
             var message = await result;
             var activity = await result as Activity;
-            if (message.Text.ToLower().Contains("hjelp"))
+            if (message.Text.ToLower().Equals("hjelp"))
             {
                 await ShowOptionsAsync(context);
             }
-            Networking api = new Networking();
+            var api = new Networking();
             api.ConnectToWit(activity.Text);
-            WitObjectStructure witObjectStructure = new WitObjectStructure(api.response);
-
+            var witObjectStructure = new WitObjectStructure(api.response);
             var messageIntent = witObjectStructure.data.entities.intent;
             if (messageIntent == null)
             {
@@ -36,14 +36,19 @@ namespace TestBot.Dialogs
             }
             else
             {
-                foreach (var item in witObjectStructure.data.entities.intent)
+                foreach (var item in messageIntent)
                 {
                     if (item.value.ToLower() == "hilsen")
                     {
-                        await context.PostAsync("Hei, mitt navn er CreunaBot, hva kan jeg hjelpe deg med?");
+                        await ShowWelcomeModuleAsync(context);
                     }
                     else if (item.value.ToLower() == "plassering")
                     {
+                        foreach (var entity in witObjectStructure.data.entities.gjenstand)
+                        {
+                            if (entity.value.ToLower().Equals("cv"))
+                                context.Call(new DocumentFinderDialog(), this.ResumeAfterChildDialog);
+                        }
                     }
                     else if (item.value.ToLower() == "tidspunkt")
                     {
@@ -51,7 +56,7 @@ namespace TestBot.Dialogs
                         {
                             if (entity.value.ToLower() == "lønn")
                             {
-                                context.Call<Object>(new EconomyDialog(), this.ResumeAfterChildDialog);
+                                context.Call(new EconomyDialog(), this.ResumeAfterChildDialog);
                             }
                         }
                     }
@@ -65,17 +70,40 @@ namespace TestBot.Dialogs
         {
             context.Wait(this.MessageReceivedAsync);
         }
+        private async Task ShowWelcomeModuleAsync(IDialogContext context)
+        {
+            var images = new List<CardImage>();
+            var actions = new List<CardAction>();
+            var thumbnailImage = CreateImage("https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "CreunaBot");
+            var organizationButton = CreateButton("imBack", "Organisasjon", "Jeg har et spørsmål om Creunas organisasjon.", "ButtonText", "DisplayText");
+            var economyButton = CreateButton("imBack", "Økonomi", "Jeg har et spørsmål om lønn, feriepenger, utlegg etc..", "ButtonText", "DisplayText");
+            var cvButton = CreateButton("imBack", "Hvor finner jeg CVer", "Jeg har spørsmål om hvor jeg finner en Creuna CV", "ButtonText", "DisplayText");
+            var itemButton = CreateButton("imBack", "Printer eller Nøkkelkort", "Jeg har spørsmål angående printer eller nøkkelkort.", "ButtonText", "DisplayText");
+            images.Add(thumbnailImage);
+            actions.Add(organizationButton);
+            actions.Add(economyButton);
+            actions.Add(cvButton);
+            actions.Add(itemButton);
 
+            var card = CreateThumbnailCard("Hei, mitt navn er CreunaBot.", "Hva kan jeg hjelpe deg med?", "Jeg er programmert til å kunne gi noen svar på følgende temaer:", images, actions);
+            var attachment = ComposeAttachment(card, ThumbnailCard.ContentType);
+            var reply = context.MakeMessage();
+            reply.Attachments.Add(attachment);
+            await context.PostAsync(reply, cancellationToken: CancellationToken.None);
+            context.Wait(MessageReceivedAsync);
+        }
         private async Task ShowOptionsAsync(IDialogContext context)
         {
             var images = new List<CardImage>();
             var actions = new List<CardAction>();
             var thumbnailImage = CreateImage("https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "nice picture of a bot");
             var pictureButton = CreateButton("openUrl", "GitBot", "https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "ButtonText", "DisplayText");
-            var wikiButton = CreateButton("openUrl", "Wikipedia", "https://en.wikipedia.org/wiki/Google_Assistant", "ButtonText", "DisplayText");
+            var wikiButton = CreateButton("openUrl", "Se hvem som er best", "https://www.creuna.com/no/", "ButtonText", "DisplayText");
+            var contactHumanButton = CreateButton("imBack", "Få tak i et menneske", "Jeg trenger et menneske som kan hjelpe meg.", "ButtonText", "DisplayText");
             images.Add(thumbnailImage);
             actions.Add(pictureButton);
             actions.Add(wikiButton);
+            actions.Add(contactHumanButton);
 
             var card = CreateThumbnailCard("Hjelp", "Hva sliter du med?", "text", images, actions);
             var attachment = ComposeAttachment(card, ThumbnailCard.ContentType);
