@@ -29,7 +29,7 @@ namespace TestBot.Dialogs
                 Console.WriteLine(e);
                 return string.Empty;
             }
-       }
+        }
 
         private static string CreateUrlToWit(string message, DateTime timeNow)
         {
@@ -94,14 +94,14 @@ namespace TestBot.Dialogs
 
         private static IEnumerable<string> GetEntitiesFromResponse(string entityString)
         {
-            if(string.IsNullOrEmpty(entityString))
-                return  new List<string>();
+            if (string.IsNullOrEmpty(entityString))
+                return new List<string>();
             var trimmedEntityString = entityString
                 .Replace("\"", "")
                 .Replace("[", "")
                 .Replace("]", "");
             var entities = trimmedEntityString
-                .Split(new[] {","}, StringSplitOptions.RemoveEmptyEntries);
+                .Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries);
             return entities
                 .Where(e => !e.Contains("$"));
         }
