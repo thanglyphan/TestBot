@@ -25,9 +25,9 @@ namespace TestBot.Dialogs
             {
                 await ShowOptionsAsync(context);
             }
-            Networking api = new Networking();
+            var api = new Networking();
             api.ConnectToWit(activity.Text);
-            WitObjectStructure witObjectStructure = new WitObjectStructure(api.response);
+            var witObjectStructure = new WitObjectStructure(api.response);
             var messageIntent = witObjectStructure.data.entities.intent;
             if (messageIntent == null)
             {
@@ -40,7 +40,6 @@ namespace TestBot.Dialogs
                     if (item.value.ToLower() == "hilsen")
                     {
                         await ShowWelcomeModuleAsync(context);
-                        //await context.PostAsync("Hei, mitt navn er CreunaBot, hva kan jeg hjelpe deg med?");
                     }
                     else if (item.value.ToLower() == "plassering")
                     {
