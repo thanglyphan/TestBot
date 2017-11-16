@@ -35,6 +35,9 @@ namespace TestBot
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
 
+            //services.AddCors(options => options.AddPolicy("AllowSpecificOrigin", builder => builder.WithOrigins("http://localhost:3000")));
+            services.AddCors();
+
             JsonConvert.DefaultSettings = () =>     new JsonSerializerSettings()
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),

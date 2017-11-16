@@ -1,0 +1,107 @@
+body{
+  background-color: #6900aa;
+}
+
+p{
+  margin: 0;
+}
+
+.App {
+  text-align: center;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+  box-shadow: 0px 40px 10px red;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.mainContainer{
+  width: 100%;
+}
+
+.form{
+  width: 100%;
+  padding: 100px 0 100px 0px;
+  background-color: #444;
+  box-shadow: 0px 10px 40px #222;
+}
+
+.textInput{
+  display: block;
+  min-width: 60%;
+  max-width: 60%;
+  min-height: 60px;
+  margin: 20px auto;
+  font-size: 24px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+.textInput.fail::placeholder{
+  color: red !important;
+  animation-name: "test";
+  animation-duration: 4s;
+}
+
+/*.textInput::placeholder{
+  transition: 1s;
+}
+
+.textInput:focus::placeholder{
+  transform: translateX(50%);
+  transform: scale(0.1);
+  opacity: 0;
+}*/
+
+.submitBtn{
+  position: relative;
+  font-size: 24px;
+  background: #FFF;
+  border: none;
+  width: 120px;
+  height: 50px;
+  box-shadow: 0px 3px 15px #666;
+  background: radial-gradient(#fff 15%, #eee 40%, #ccc 90%); /* Standard syntax */
+}
+
+@keyframes test {
+  from{color: blue};
+  to{color: green};
+}
+
+.submitBtn:hover{
+  cursor: pointer;
+  background: white;
+}
+
+.submitBtn:active{
+  bottom: -2px;
+}
+
+.submitBtn:focus{
+  outline: none;
+}
+
+.recentQuestions{
+  align-items: flex-start;
+  padding: 0 20px;
+  width: 600px;
+  margin: 0 auto;
+}
+
+li{
+  font-size: 18px;
+  text-align: left;
+  padding: 4px 0;
+}

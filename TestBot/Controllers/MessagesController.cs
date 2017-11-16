@@ -9,7 +9,7 @@ using System;
 namespace TestBot.Controllers
 {
     [Route("api/[controller]")]
-    [BotAuthentication]
+    //[BotAuthentication]
     public class MessagesController : Controller
     {
         [HttpPost]
