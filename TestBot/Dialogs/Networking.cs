@@ -12,9 +12,6 @@ namespace TestBot.Dialogs
 
         public string GetResponseForMessage(string message)
         {
-            //TODO: fjern denne. Kun for å teste at GetEntities fortsatt fungerer
-            GetEntities().ForEach(Console.WriteLine);
-
             if (string.IsNullOrEmpty(message))
                 return string.Empty;
             var url = CreateUrlToWit(message, DateTime.UtcNow);
