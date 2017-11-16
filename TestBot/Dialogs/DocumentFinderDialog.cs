@@ -5,12 +5,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using TestBot.ObjectsFromWit;
 
 namespace TestBot.Dialogs
 {
     [Serializable]
     public class DocumentFinderDialog : IDialog<object>
     {
+
         public async Task StartAsync(IDialogContext context)
         {
             var message = context.Activity;
@@ -22,16 +24,22 @@ namespace TestBot.Dialogs
         private async Task FindSpecificDocument(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var message = await result;
-            if (message.Text.ToLower().Equals("ja"))
-            {
-                await context.PostAsync("Bruker du PC eller MAC?");
-                context.Wait(null);
-                await context.PostAsync("Hvem sin CV ønsker du å finne?");
-                context.Wait(this.SearchQuery);
-            }
-            else
-                context.Wait(MessageReceived);
+            var api = new Networking();
+            var response = api.GetResponseForMessage(message?.Text);
+            var witObjectStructure = new WitObjectStructure(response);
+            var messageIntent = witObjectStructure.data.entities.intent;
 
+            foreach (var item in messageIntent)
+                if (item.value.ToLower().Equals("bekreftelse"))
+                {
+                    await context.PostAsync("Hvem sin CV ønsker du å finne?");
+                    context.Wait(this.SearchQuery);
+                }
+                else if (item.value.ToLower().Equals("avkreftelse"))
+                {
+                    await context.PostAsync("Den er grei.");
+                    context.Done<object>(null);
+                }
         }
 
         private async Task SearchQuery(IDialogContext context, IAwaitable<IMessageActivity> result)
@@ -55,27 +63,27 @@ namespace TestBot.Dialogs
 
         private async Task AfterRepeatAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-
             var confirm = await result;
-            if (confirm.Text.ToLower().Contains("nei"))
-            {
-                await context.PostAsync("Supert!");
-                context.Done<object>(new Object());
-            }
-            else
-            {
-                await context.PostAsync("Hvilken CV skal jeg finne denne gangen?");
-                context.Wait(SearchQuery);
-            }
+            var api = new Networking();
+            var response = api.GetResponseForMessage(confirm?.Text);
+            var witObjectStructure = new WitObjectStructure(response);
+            var messageIntent = witObjectStructure.data.entities.intent;
+            foreach (var item in messageIntent)
+                if (item.value.ToLower().Equals("bekreftelse"))
+                {
+                    await context.PostAsync("Hvilken CV skal jeg finne denne gangen?");
+                    context.Wait(SearchQuery);
+                }
+                else if (item.value.ToLower().Equals("avkreftelse"))
+                {
+                    await context.PostAsync("Den er grei!");
+                    context.Done<object>(null);
+                }
         }
 
         private async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            bool requestHandled = false;
-            var message = await result as Activity;
-
-            requestHandled = true;
-            context.Done<bool>(requestHandled);
+            context.Done<object>(null);
         }
         private async Task ShowFileDialog(IDialogContext context, string argument)
         {

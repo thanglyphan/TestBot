@@ -78,8 +78,29 @@ namespace TestBot.Dialogs
         }
         private async Task ResumeAfterDocumentFinderDialog(IDialogContext context, IAwaitable<object> result)
         {
-            context.Wait(this.MessageReceivedAsync);
+            //var message = await result as Activity;
+            //var api = new Networking();
+            //var response = api.GetResponseForMessage(message.Text);
+            //var witObjectStructure = new WitObjectStructure(response);
+            //var messageIntent = witObjectStructure.data.entities.intent;
+            //if (messageIntent != null)
+            //{
+            //    foreach (var item in messageIntent)
+            //    {
+            //        if (item.value.ToLower().Equals("bekreftelse"))
+            //        {
+            //            context.Wait(this.MessageReceivedAsync);
+            //        }
+            //        else if (item.value.ToLower().Equals("avkreftelse"))
+            //        {
+            //            context.Done<object>(null);
+            //        }
+            //    }
+            //}
+            //else
+                context.Wait(this.MessageReceivedAsync);
         }
+
         private async Task ShowWelcomeModuleAsync(IDialogContext context)
         {
             var images = new List<CardImage>();
