@@ -20,9 +20,8 @@ namespace TestBot.Dialogs
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            var message = await result;
             var activity = await result as Activity;
-            if (message.Text.ToLower().Equals("hjelp"))
+            if (activity.Text.ToLower().Equals("hjelp"))
             {
                 await ShowOptionsAsync(context);
             }
@@ -48,7 +47,7 @@ namespace TestBot.Dialogs
                         foreach (var entity in witObjectStructure.data.entities.gjenstand)
                         {
                             if (entity.value.ToLower().Equals("cv"))
-                                context.Call(new DocumentFinderDialog(), this.ResumeAfterChildDialog);
+                                await context.Forward(new DocumentFinderDialog(), this.ResumeAfterDocumentFinderDialog, messageIntent, CancellationToken.None);
                         }
                     }
                     else if (item.value.ToLower() == "tidspunkt")
@@ -69,6 +68,12 @@ namespace TestBot.Dialogs
 
         private async Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
+            context.Wait(this.MessageReceivedAsync);
+        }
+        private async Task ResumeAfterDocumentFinderDialog(IDialogContext context, IAwaitable<object> result)
+        {
+            var message = await result as Activity;
+            await context.PostAsync(message.Text);
             context.Wait(this.MessageReceivedAsync);
         }
         private async Task ShowWelcomeModuleAsync(IDialogContext context)
