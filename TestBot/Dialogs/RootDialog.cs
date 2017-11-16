@@ -46,7 +46,7 @@ namespace TestBot.Dialogs
                         foreach (var entity in witObjectStructure.data.entities.gjenstand)
                         {
                             if (entity.value.ToLower().Equals("cv"))
-                                await context.Forward(new DocumentFinderDialog(), this.ResumeAfterDocumentFinderDialog, messageIntent, CancellationToken.None);
+                                context.Call(new DocumentFinderDialog(), this.ResumeAfterDocumentFinderDialog);
                         }
                     }
                     else if (item.value.ToLower() == "tidspunkt")
@@ -71,8 +71,6 @@ namespace TestBot.Dialogs
         }
         private async Task ResumeAfterDocumentFinderDialog(IDialogContext context, IAwaitable<object> result)
         {
-            var message = await result as Activity;
-            await context.PostAsync(message.Text);
             context.Wait(this.MessageReceivedAsync);
         }
         private async Task ShowWelcomeModuleAsync(IDialogContext context)
@@ -82,7 +80,7 @@ namespace TestBot.Dialogs
             var thumbnailImage = CreateImage("https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "CreunaBot");
             var organizationButton = CreateButton("imBack", "Organisasjon", "Jeg har et spørsmål om Creunas organisasjon.", "ButtonText", "DisplayText");
             var economyButton = CreateButton("imBack", "Økonomi", "Jeg har et spørsmål om lønn, feriepenger, utlegg etc..", "ButtonText", "DisplayText");
-            var cvButton = CreateButton("imBack", "Hvor finner jeg CVer", "Jeg har spørsmål om hvor jeg finner en Creuna CV", "ButtonText", "DisplayText");
+            var cvButton = CreateButton("imBack", "CV plassering", "Jeg lurer på hvor jeg finner Creuna CV’er.", "ButtonText", "DisplayText");
             var itemButton = CreateButton("imBack", "Printer eller Nøkkelkort", "Jeg har spørsmål angående printer eller nøkkelkort.", "ButtonText", "DisplayText");
             images.Add(thumbnailImage);
             actions.Add(organizationButton);
