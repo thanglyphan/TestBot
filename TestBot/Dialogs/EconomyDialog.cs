@@ -34,7 +34,7 @@ namespace TestBot.Dialogs
         {
             switch (entity)
             {
-                case "utlegg": return Enums.Lønn;
+                case "utlegg": return Enums.Utlegg;
                 case "pensjon": return Enums.Pensjon;
                 case "feriepenger": return Enums.Feriepenger;
                 case "lønn": return Enums.Lønn; 
@@ -47,11 +47,16 @@ namespace TestBot.Dialogs
         {
             switch(this.type)
             {
-                case "tidspunkt": await context.PostAsync(ReplyToUser(context, this.entityIndex)); break;
+                case "tidspunkt": await GetPostAsync(context, this.entityIndex); break;
                 default: await context.PostAsync("HÆ"); break;
             }
             context.Done<object>(new Object());
         }
+        private async Task GetPostAsync(IDialogContext context, Enums entityType)
+        {
+            await context.PostAsync(ReplyToUser(context, entityType));
+        }
+
         private IMessageActivity ReplyToUser(IDialogContext context, Enums entity)
         {
             var reply = context.MakeMessage();
