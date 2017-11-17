@@ -12,10 +12,8 @@ namespace TestBot.Dialogs
     [Serializable]
     public class DocumentFinderDialog : IDialog<object>
     {
-
         public async Task StartAsync(IDialogContext context)
         {
-            var message = context.Activity;
             await context.PostAsync("[DocumentFinderDialog]");
             await context.PostAsync("Alle Creunas ansatte har sin Creuna CV lagret på filserveren. Ønsker du at jeg skal finne en spesifikk CV for deg?");
             context.Wait(FindSpecificDocument);
@@ -33,7 +31,7 @@ namespace TestBot.Dialogs
                 if (item.value.ToLower().Equals("bekreftelse"))
                 {
                     await context.PostAsync("Hvem sin CV ønsker du å finne?");
-                    context.Wait(this.SearchQuery);
+                    context.Wait(SearchQuery);
                 }
                 else if (item.value.ToLower().Equals("avkreftelse"))
                 {
@@ -45,17 +43,16 @@ namespace TestBot.Dialogs
         private async Task SearchQuery(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var searchQuery = await result;
-            string cvLocation = @"S:\Creuna internt\CV og maler\CV\CVer ORGANISERT PER ANSATT";
-            string searchResult = Path.Combine(cvLocation, searchQuery.Text.ToLower());
-            if (searchQuery != null)
+            var cvLocation = @"S:\Creuna internt\CV og maler\CV\CVer ORGANISERT PER ANSATT";
+            if (!String.IsNullOrEmpty(searchQuery.Text))
             {
+                var searchResult = Path.Combine(cvLocation, searchQuery?.Text.ToLower());
                 await context.PostAsync("Jeg tror CVen du leter etter ligger her:");
                 await context.PostAsync(searchResult);
                 await ShowFileDialog(context, searchResult);
             }
             else
             {
-                await context.PostAsync(searchResult);
                 await context.PostAsync("Jeg fant ikke den du leter etter, er du sikker på at du har skrevet navnet riktig? Prøv igjen.");
                 context.Wait(SearchQuery);
             }
@@ -81,10 +78,6 @@ namespace TestBot.Dialogs
                 }
         }
 
-        private async Task MessageReceived(IDialogContext context, IAwaitable<IMessageActivity> result)
-        {
-            context.Done<object>(null);
-        }
         private async Task ShowFileDialog(IDialogContext context, string argument)
         {
             var path = argument;
