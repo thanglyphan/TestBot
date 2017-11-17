@@ -71,7 +71,7 @@ namespace TestBot.Dialogs
                     }
                     else if (item.Value.ToLower() == "tidspunkt")
                     {
-                        var economyDialog = new EconomyDialog(activity, witObjectStructure.Data.Entities.Okonomi);
+                        var economyDialog = new EconomyDialog();
                         context.Call(economyDialog, this.ResumeAfterChildDialog);
                     }
                     else
