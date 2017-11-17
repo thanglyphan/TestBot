@@ -21,10 +21,7 @@ namespace TestBot.Dialogs
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var activity = await result as Activity;
-            if (activity.Text.ToLower().Equals("hjelp"))
-            {
-                await ShowOptionsAsync(context);
-            }
+
             var api = new Networking();
             var response = api.GetResponseForMessage(activity?.Text);
             Console.WriteLine(response);
@@ -44,7 +41,11 @@ namespace TestBot.Dialogs
             {
                 foreach (var item in messageIntent)
                 {
-                    if (item.value.ToLower() == "hilsen")
+                    if (item.value.ToLower() == "hjelp")
+                    {
+                        await ShowOptionsAsync(context);
+                    }
+                    else if (item.value.ToLower() == "hilsen")
                     {
                         await ShowWelcomeModuleAsync(context);
                     }
@@ -74,31 +75,14 @@ namespace TestBot.Dialogs
 
         private async Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
+            await context.PostAsync("[RootDialog]");
             context.Wait(this.MessageReceivedAsync);
         }
         private async Task ResumeAfterDocumentFinderDialog(IDialogContext context, IAwaitable<object> result)
         {
-            //var message = await result as Activity;
-            //var api = new Networking();
-            //var response = api.GetResponseForMessage(message.Text);
-            //var witObjectStructure = new WitObjectStructure(response);
-            //var messageIntent = witObjectStructure.data.entities.intent;
-            //if (messageIntent != null)
-            //{
-            //    foreach (var item in messageIntent)
-            //    {
-            //        if (item.value.ToLower().Equals("bekreftelse"))
-            //        {
-            //            context.Wait(this.MessageReceivedAsync);
-            //        }
-            //        else if (item.value.ToLower().Equals("avkreftelse"))
-            //        {
-            //            context.Done<object>(null);
-            //        }
-            //    }
-            //}
-            //else
-                context.Wait(this.MessageReceivedAsync);
+            await context.PostAsync("[RootDialog]");
+            await context.PostAsync("Hva annet kan jeg hjelpe deg med?");
+            context.Wait(this.MessageReceivedAsync);
         }
 
         private async Task ShowWelcomeModuleAsync(IDialogContext context)
