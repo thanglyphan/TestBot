@@ -1,112 +1,125 @@
-﻿using System;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Web.Script.Serialization;
 
 namespace TestBot.ObjectsFromWit
 {
-
     public class WitObjectStructure
     {
-        public WitObject data = new WitObject();
-        public WitObjectStructure() { }
+        public WitObject Data;
+
         public WitObjectStructure(string json)
         {
-            string pattern = @"[\""]?entities[\""]?(\s+)?(:)?(\s+)?{\n\s+\""\w+\""";
-            string replacementPattern = @"[\""]?entities[\""]?(\s+)?(:)?(\s+)?{\n\s+\""Test\""";
             var inputString = json;
+            var serializer = new JavaScriptSerializer();
+            Data = (WitObject)serializer.Deserialize(inputString, typeof(WitObject));
+        }
 
-            Regex regex = new Regex(pattern);
-            Match match = regex.Match(inputString);
-            Console.WriteLine(match.Value);
-
-            var final = inputString.Replace(pattern, replacementPattern);
-            Console.WriteLine(final);
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            this.data = (WitObject)serializer.Deserialize(inputString, typeof(WitObject));
+        public static string DataAsJson(WitObject data)
+        {
+            return new JavaScriptSerializer().Serialize(data);
         }
     }
 
-    public class WitObject
+    public class MessageData
     {
-        public string msg_id { get; set; }
-        public string _text { get; set; }
-        public Entities entities { get; set; }
-        public WitObject() { }
-    }
+        public string Id { get; set; }
+        public string Text { get; set; }
+        public List<Intent> Intents { get; set; }
+        public List<Entity> Entities { get; set; }
 
-    public class Entities
-    {
-        public Test[] test { get; set; }
-        public Intent[] intent { get; set; }
-        public Organisasjon[] organisasjon { get; set; }
-        public Okonomi[] okonomi { get; set; }
-        public Gjenstand[] gjenstand { get; set; }
-    }
-    public class Gjenstand : CategoryBase
-    {
-        public override string Name => "Gjenstand";
-        public override string GetResponse(Intent intent)
+        public MessageData(WitObject wit)
         {
-            return "Leter du etter en gjenstand?";
+            Id = wit.Msg_id;
+            Text = wit._text;
+            Intents = wit.Entities?.Intent
+                .ToList()
+                .Select(x => new Intent {Confidence = x.Confidence, Value = x.Value})
+                .ToList() ?? new List<Intent>();
+            Entities = GetEntitiesFromWitEntities(wit.Entities);
         }
-    }
-    public class Test:CategoryBase
-    {
-        public override string Name => "Test";
 
-        public override string GetResponse(Intent intent)
+        private static List<Entity> GetEntitiesFromWitEntities(WitEntities witEntities)
         {
-            return "Test vellykket";
-        }
-    }
+            if (witEntities == null)
+                return new List<Entity>();
 
-    public class Okonomi:CategoryBase
-    {
-        public override string Name => "Okonomi";
-        public string[] Lonn = new[] { "lønn", "lønning", "lønnsutbetaling" , "lønna"};
-        public string[] Feriepenger = new[] { "feriepenger", "feriepenga", "ferie-penger" };
-        public string[] Mengde = new[] { "mye", "masse", "mange" };
+            var maybeGjenstandList = witEntities.Gjenstand?.Select(x => new Entity(x)) ?? new List<Entity>();
+            var maybeOkonomiList = witEntities.Okonomi?.Select(x => new Entity(x)) ?? new List<Entity>();
+            var maybeOrganisasjonList = witEntities.Organisasjon?.Select(x => new Entity(x)) ?? new List<Entity>();
 
-        public override string GetResponse(Intent intent)
-        {
-            if (Lonn.Contains(value.ToLower()))
-            {
-                if (intent.value.Equals("Tidspunkt"))
-                    return "Lønnen kommer den 20de hver måned";
-                if (intent.value.Equals("Mengde"))
-                    return "Mer enn nok";
-            }
-            else if (Feriepenger.Contains(value.ToLower())) {
-
-            }
-            
-            return "Nå skjønte jeg ikke hva du mente. Kan du omformulere spørsmålet?";
-        }
-    }
-
-    public class Organisasjon: CategoryBase
-    {
-        public override string Name => "Organisasjon";
-
-        public override string GetResponse(Intent intent)
-        {
-            return "Velkommen til Creuna :)";
+            return new List<Entity>()
+                .Concat(maybeGjenstandList)
+                .Concat(maybeOkonomiList)
+                .Concat(maybeOrganisasjonList)
+                .ToList();
         }
     }
 
     public class Intent
     {
-        public float confidence { get; set; }
-        public string value { get; set; }
+        public float Confidence { get; set; }
+        public string Value { get; set; }
     }
 
-    public abstract class CategoryBase
+    public class Entity
     {
-        public abstract string GetResponse(Intent intent);
+        public string Name { get; set; }
+        public float Confidence { get; set; }
+        public string Value { get; set; }
+        public string Type { get; set; }
+
+        public Entity(WitCategoryBase wit)
+        {
+            Name = wit.Name;
+            Confidence = wit.Confidence;
+            Value = wit.Value;
+            Type = wit.Type;
+        }
+    }
+
+
+    public class WitObject
+    {
+        public string Msg_id { get; set; }
+        public string _text { get; set; }
+        public WitEntities Entities { get; set; }
+    }
+
+    public class WitEntities
+    {
+        public WitIntent[] Intent { get; set; }
+        public WitOrganisasjon[] Organisasjon { get; set; }
+        public WitOkonomi[] Okonomi { get; set; }
+        public WitGjenstand[] Gjenstand { get; set; }
+    }
+
+    public class WitGjenstand : WitCategoryBase
+    {
+        public override string Name => "Gjenstand";
+    }
+
+    public class WitOkonomi : WitCategoryBase
+    {
+        public override string Name => "Okonomi";
+    }
+
+    public class WitOrganisasjon : WitCategoryBase
+    {
+        public override string Name => "Organisasjon";
+    }
+
+    public class WitIntent
+    {
+        public float Confidence { get; set; }
+        public string Value { get; set; }
+    }
+
+    public abstract class WitCategoryBase
+    {
         public abstract string Name { get; }
-        public float confidence { get; set; }
-        public string value { get; set; }
-        public string type { get; set; }
+        public float Confidence { get; set; }
+        public string Value { get; set; }
+        public string Type { get; set; }
     }
 }

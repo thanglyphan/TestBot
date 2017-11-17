@@ -5,6 +5,7 @@ using Microsoft.Bot.Connector;
 using TestBot.ObjectsFromWit;
 using System.Collections.Generic;
 using System.Threading;
+using Newtonsoft.Json;
 
 namespace TestBot.Dialogs
 {
@@ -29,15 +30,26 @@ namespace TestBot.Dialogs
             }
             var api = new Networking();
             var response = api.GetResponseForMessage(activity?.Text);
-            Console.WriteLine(response);
 
             if (string.IsNullOrEmpty(response))
             {
                 await context.PostAsync("Something is wrong. I was unable to process your request");
             }
+            Console.WriteLine("Data from Wit.Ai:");
+            Console.WriteLine(response);
+
 
             var witObjectStructure = new WitObjectStructure(response);
-            var messageIntent = witObjectStructure.data.entities.intent;
+            Console.WriteLine("WitObject:");
+            if (witObjectStructure.Data != null)
+            {
+                Console.WriteLine(WitObjectStructure.DataAsJson(witObjectStructure.Data));
+                var data = new MessageData(witObjectStructure.Data);
+                Console.WriteLine(JsonConvert.SerializeObject(data));
+            }
+
+
+            var messageIntent = witObjectStructure.Data.Entities.Intent;
             if (messageIntent == null)
             {
                 await context.PostAsync("Jeg forstår ikke hva du vil. Kan du omformulere spørsmålet?");
@@ -46,26 +58,26 @@ namespace TestBot.Dialogs
             {
                 foreach (var item in messageIntent)
                 {
-                    if (item.value.ToLower() == "hilsen")
+                    if (item.Value.ToLower() == "hilsen")
                     {
                         await ShowWelcomeModuleAsync(context);
                     }
-                    if (item.value.ToLower() == "bekreftelse")
+                    if (item.Value.ToLower() == "bekreftelse")
                     {
                         await context.PostAsync("OK");
 
                     }
-                    else if (item.value.ToLower() == "plassering")
+                    else if (item.Value.ToLower() == "plassering")
                     {
-                        foreach (var entity in witObjectStructure.data.entities.gjenstand)
+                        foreach (var entity in witObjectStructure.Data.Entities.Gjenstand)
                         {
-                            if (entity.value.ToLower().Equals("cv"))
+                            if (entity.Value.ToLower().Equals("cv"))
                                 context.Call(new DocumentFinderDialog(), this.ResumeAfterChildDialog);
                         }
                     }
-                    else if (item.value.ToLower() == "tidspunkt")
+                    else if (item.Value.ToLower() == "tidspunkt")
                     {
-                        var economyDialog = new EconomyDialog(message, witObjectStructure.data.entities.okonomi);
+                        var economyDialog = new EconomyDialog(message, witObjectStructure.Data.Entities.Okonomi);
                         context.Call(economyDialog, this.ResumeAfterChildDialog);
                     }
                     else

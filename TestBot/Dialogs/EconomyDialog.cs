@@ -18,9 +18,9 @@ namespace TestBot.Dialogs
         private string replyVacationMoney =
             "Feriepengene kommer aldri";
         private string replyAskForMoreHelp = "Var det noe mer jeg kan hjelpe deg med?";
-        private Okonomi[] okonomi;
+        private WitOkonomi[] okonomi;
      
-        public EconomyDialog(IMessageActivity message, Okonomi[] okonomi)
+        public EconomyDialog(IMessageActivity message, WitOkonomi[] okonomi)
         {
             this.message = message.Text.ToLower();
             this.okonomi = okonomi;
@@ -30,22 +30,23 @@ namespace TestBot.Dialogs
         {
             foreach(var item in okonomi)
             {
-                foreach(var lonn in item.Lonn)
-                {
-                    if (message.Contains(lonn))
-                    {
-                        await context.PostAsync(ReplyToUser(context, this.replyCheck));
-                        await context.PostAsync(ReplyToUser(context, this.replyAskForMoreHelp));
-                    }
-                }
-                foreach (var feriepenger in item.Feriepenger)
-                {
-                    if (message.Contains(feriepenger))
-                    {
-                        await context.PostAsync(ReplyToUser(context, this.replyVacationMoney));
-                        await context.PostAsync(ReplyToUser(context, this.replyAskForMoreHelp));
-                    }
-                }
+                //foreach(var lonn in item.WitLonn)
+                //{
+                //    if (message.Contains(lonn))
+                //    {
+                //        await context.PostAsync(ReplyToUser(context, this.replyCheck));
+                //        await context.PostAsync(ReplyToUser(context, this.replyAskForMoreHelp));
+                //    }
+                //}
+                //foreach (var feriepenger in item.Feriepenger)
+                //{
+                //    if (message.Contains(feriepenger))
+                //    {
+                //        await context.PostAsync(ReplyToUser(context, this.replyVacationMoney));
+                //        await context.PostAsync(ReplyToUser(context, this.replyAskForMoreHelp));
+                //    }
+                //}
+                //TODO: Broken. Replace with new structure
             }
             context.Done<object>(new Object());
         }
