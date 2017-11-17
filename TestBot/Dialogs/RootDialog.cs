@@ -28,8 +28,15 @@ namespace TestBot.Dialogs
                 await ShowOptionsAsync(context);
             }
             var api = new Networking();
-            api.ConnectToWit(activity.Text);
-            var witObjectStructure = new WitObjectStructure(api.response);
+            var response = api.GetResponseForMessage(activity?.Text);
+            Console.WriteLine(response);
+
+            if (string.IsNullOrEmpty(response))
+            {
+                await context.PostAsync("Something is wrong. I was unable to process your request");
+            }
+
+            var witObjectStructure = new WitObjectStructure(response);
             var messageIntent = witObjectStructure.data.entities.intent;
             if (messageIntent == null)
             {
