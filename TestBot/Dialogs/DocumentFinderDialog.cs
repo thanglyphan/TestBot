@@ -6,6 +6,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using TestBot.ObjectsFromWit;
+using TestBot.Cards;
 
 namespace TestBot.Dialogs
 {
@@ -52,9 +53,10 @@ namespace TestBot.Dialogs
             await context.PostAsync("Jeg tror CVen du leter etter ligger her:");
             await context.PostAsync(searchResult);
             await ShowFileDialog(context, searchResult);
+            context.Wait(AfterDocumentFoundAsync);
         }
 
-        private async Task AfterRepeatAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
+        private async Task AfterDocumentFoundAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
             var confirm = await result;
             var api = new Networking();
@@ -79,50 +81,19 @@ namespace TestBot.Dialogs
             var path = argument;
             var images = new List<CardImage>();
             var actions = new List<CardAction>();
-            var documentButton = CreateButton("openUrl", "Åpne mappe", path, "ButtonText", "DisplayText");
+            var ThumbnailCardGenerator = new ThumbnailCardGenerator();
+            var documentButton = ThumbnailCardGenerator.
+                CreateButton("openUrl", "Åpne mappe", path, "ButtonText", "DisplayText");
             actions.Add(documentButton);
 
-            var card = CreateThumbnailCard("Er dette riktig?", "", "", images, actions);
-            var attachment = ComposeAttachment(card, ThumbnailCard.ContentType);
+            var card = ThumbnailCardGenerator.
+                CreateThumbnailCard("Er dette riktig?", "", "", images, actions);
+            var attachment = ThumbnailCardGenerator.
+                ComposeAttachment(card, ThumbnailCard.ContentType);
             var reply = context.MakeMessage();
             reply.Attachments.Add(attachment);
             await context.PostAsync(reply, cancellationToken: CancellationToken.None);
             await context.PostAsync("Skal jeg finne en annen CV til deg?");
-            context.Wait(AfterRepeatAsync);
         }
-
-        public CardImage CreateImage(string url, string alt)
-            => new CardImage
-            {
-                Url = url,
-                Alt = alt
-            };
-
-        public CardAction CreateButton(string type, string title, object value, string text, string displayText)
-            => new CardAction
-            {
-                Type = type,
-                Title = title,
-                Value = value,
-                Text = text,
-                DisplayText = displayText
-            };
-
-        public ThumbnailCard CreateThumbnailCard(string title, string subtitle, string text, List<CardImage> images, List<CardAction> actions)
-        => new ThumbnailCard
-        {
-            Title = title,
-            Subtitle = subtitle,
-            Text = text,
-            Images = images,
-            Buttons = actions
-        };
-
-        public Attachment ComposeAttachment(ThumbnailCard card, string contentType)
-            => new Attachment
-            {
-                ContentType = contentType,
-                Content = card
-            };
     }
 }
