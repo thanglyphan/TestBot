@@ -11,7 +11,6 @@ namespace TestBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
-        public string message { get; set; }
         public Task StartAsync(IDialogContext context)
         {
             context.PostAsync("[RootDialog]");
@@ -21,12 +20,8 @@ namespace TestBot.Dialogs
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            var message = await result;
             var activity = await result as Activity;
-            if (message.Text.ToLower().Equals("hjelp"))
-            {
-                await ShowOptionsAsync(context);
-            }
+
             var api = new Networking();
             var response = api.GetResponseForMessage(activity?.Text);
             Console.WriteLine(response);
@@ -46,7 +41,11 @@ namespace TestBot.Dialogs
             {
                 foreach (var item in messageIntent)
                 {
-                    if (item.value.ToLower() == "hilsen")
+                    if (item.value.ToLower() == "hjelp")
+                    {
+                        await ShowOptionsAsync(context);
+                    }
+                    else if (item.value.ToLower() == "hilsen")
                     {
                         await ShowWelcomeModuleAsync(context);
                     }
@@ -60,12 +59,12 @@ namespace TestBot.Dialogs
                         foreach (var entity in witObjectStructure.data.entities.gjenstand)
                         {
                             if (entity.value.ToLower().Equals("cv"))
-                                context.Call(new DocumentFinderDialog(), this.ResumeAfterChildDialog);
+                                context.Call(new DocumentFinderDialog(), this.ResumeAfterDocumentFinderDialog);
                         }
                     }
                     else if (item.value.ToLower() == "tidspunkt")
                     {
-                        var economyDialog = new EconomyDialog(message, witObjectStructure.data.entities.okonomi);
+                        var economyDialog = new EconomyDialog(activity, witObjectStructure.data.entities.okonomi);
                         context.Call(economyDialog, this.ResumeAfterChildDialog);
                     }
                     else
@@ -76,8 +75,16 @@ namespace TestBot.Dialogs
 
         private async Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
+            await context.PostAsync("[RootDialog]");
             context.Wait(this.MessageReceivedAsync);
         }
+        private async Task ResumeAfterDocumentFinderDialog(IDialogContext context, IAwaitable<object> result)
+        {
+            await context.PostAsync("[RootDialog]");
+            await context.PostAsync("Hva annet kan jeg hjelpe deg med?");
+            context.Wait(this.MessageReceivedAsync);
+        }
+
         private async Task ShowWelcomeModuleAsync(IDialogContext context)
         {
             var images = new List<CardImage>();
@@ -85,7 +92,7 @@ namespace TestBot.Dialogs
             var thumbnailImage = CreateImage("https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "CreunaBot");
             var organizationButton = CreateButton("imBack", "Organisasjon", "Jeg har et spørsmål om Creunas organisasjon.", "ButtonText", "DisplayText");
             var economyButton = CreateButton("imBack", "Økonomi", "Jeg har et spørsmål om lønn, feriepenger, utlegg etc..", "ButtonText", "DisplayText");
-            var cvButton = CreateButton("imBack", "Hvor finner jeg CVer", "Jeg har spørsmål om hvor jeg finner en Creuna CV", "ButtonText", "DisplayText");
+            var cvButton = CreateButton("imBack", "CV plassering", "Jeg lurer på hvor jeg finner Creuna CV’er.", "ButtonText", "DisplayText");
             var itemButton = CreateButton("imBack", "Printer eller Nøkkelkort", "Jeg har spørsmål angående printer eller nøkkelkort.", "ButtonText", "DisplayText");
             images.Add(thumbnailImage);
             actions.Add(organizationButton);
