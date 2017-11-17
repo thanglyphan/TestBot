@@ -44,18 +44,14 @@ namespace TestBot.Dialogs
         {
             var searchQuery = await result;
             var cvLocation = @"S:\Creuna internt\CV og maler\CV\CVer ORGANISERT PER ANSATT";
-            if (!String.IsNullOrEmpty(searchQuery.Text))
-            {
-                var searchResult = Path.Combine(cvLocation, searchQuery?.Text.ToLower());
-                await context.PostAsync("Jeg tror CVen du leter etter ligger her:");
-                await context.PostAsync(searchResult);
-                await ShowFileDialog(context, searchResult);
-            }
-            else
-            {
-                await context.PostAsync("Jeg fant ikke den du leter etter, er du sikker på at du har skrevet navnet riktig? Prøv igjen.");
-                context.Wait(SearchQuery);
-            }
+            var queryText = searchQuery?.Text?.ToLower();
+            var searchResult = !string.IsNullOrEmpty(queryText)
+                ? Path.Combine(cvLocation, queryText)
+                : cvLocation;
+
+            await context.PostAsync("Jeg tror CVen du leter etter ligger her:");
+            await context.PostAsync(searchResult);
+            await ShowFileDialog(context, searchResult);
         }
 
         private async Task AfterRepeatAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
@@ -96,14 +92,14 @@ namespace TestBot.Dialogs
         }
 
         public CardImage CreateImage(string url, string alt)
-            => new CardImage()
+            => new CardImage
             {
                 Url = url,
                 Alt = alt
             };
 
         public CardAction CreateButton(string type, string title, object value, string text, string displayText)
-            => new CardAction()
+            => new CardAction
             {
                 Type = type,
                 Title = title,
@@ -113,7 +109,7 @@ namespace TestBot.Dialogs
             };
 
         public ThumbnailCard CreateThumbnailCard(string title, string subtitle, string text, List<CardImage> images, List<CardAction> actions)
-        => new ThumbnailCard()
+        => new ThumbnailCard
         {
             Title = title,
             Subtitle = subtitle,
@@ -123,7 +119,7 @@ namespace TestBot.Dialogs
         };
 
         public Attachment ComposeAttachment(ThumbnailCard card, string contentType)
-            => new Attachment()
+            => new Attachment
             {
                 ContentType = contentType,
                 Content = card
