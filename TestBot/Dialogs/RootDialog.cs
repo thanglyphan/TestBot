@@ -105,7 +105,6 @@ namespace TestBot.Dialogs
             var reply = context.MakeMessage();
             reply.Attachments.Add(attachment);
             await context.PostAsync(reply, cancellationToken: CancellationToken.None);
-            context.Wait(MessageReceivedAsync);
         }
         private async Task ShowOptionsAsync(IDialogContext context)
         {
@@ -125,7 +124,6 @@ namespace TestBot.Dialogs
             var reply = context.MakeMessage();
             reply.Attachments.Add(attachment);
             await context.PostAsync(reply, cancellationToken: CancellationToken.None);
-            context.Wait(MessageReceivedAsync);
         }
 
         public CardImage CreateImage(string url, string alt)
