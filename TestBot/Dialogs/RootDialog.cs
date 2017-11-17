@@ -6,6 +6,7 @@ using TestBot.ObjectsFromWit;
 using System.Collections.Generic;
 using System.Threading;
 using Newtonsoft.Json;
+using TestBot.Models;
 
 namespace TestBot.Dialogs
 {
@@ -25,7 +26,6 @@ namespace TestBot.Dialogs
 
             var api = new Networking();
             var response = api.GetResponseForMessage(activity?.Text);
-
             if (string.IsNullOrEmpty(response))
             {
                 await context.PostAsync("Something is wrong. I was unable to process your request");
@@ -34,17 +34,16 @@ namespace TestBot.Dialogs
             Console.WriteLine(response);
 
 
-            var witObjectStructure = new WitObjectStructure(response);
-            Console.WriteLine("WitObject:");
-            if (witObjectStructure.Data != null)
+            var witObject = new WitObjectStructure(response);
+            if (witObject.Data == null)
             {
-                Console.WriteLine(WitObjectStructure.DataAsJson(witObjectStructure.Data));
-                var data = new MessageData(witObjectStructure.Data);
-                Console.WriteLine(JsonConvert.SerializeObject(data));
+                await context.PostAsync("Something is wrong. I was unable to process your request");
             }
+            var data = new MessageData(witObject.Data);
+            Console.WriteLine("MessageData:");
+            Console.WriteLine(JsonConvert.SerializeObject(data));
 
-
-            var messageIntent = witObjectStructure.Data?.Entities?.Intent;
+            var messageIntent = witObject.Data?.Entities?.Intent;
             if (messageIntent == null)
             {
                 await context.PostAsync("Jeg forstår ikke hva du vil. Kan du omformulere spørsmålet?");
@@ -63,7 +62,7 @@ namespace TestBot.Dialogs
                     }
                     else if (item.Value.ToLower() == "plassering")
                     {
-                        foreach (var entity in witObjectStructure.Data.Entities.Gjenstand)
+                        foreach (var entity in witObject.Data.Entities.Gjenstand)
                         {
                             if (entity.Value.ToLower().Equals("cv"))
                                 context.Call(new DocumentFinderDialog(), this.ResumeAfterDocumentFinderDialog);
