@@ -1,8 +1,5 @@
-﻿using Autofac;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Bot.Builder.Dialogs;
-using Microsoft.Bot.Builder.Internals.Fibers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -34,17 +31,14 @@ namespace TestBot
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                    options.SerializerSettings.Formatting = Newtonsoft.Json.Formatting.Indented;
+                    options.SerializerSettings.Formatting = Formatting.Indented;
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
 
-            //services.AddCors(options => options.AddPolicy("AllowSpecificOrigin", builder => builder.WithOrigins("http://localhost:3000")));
-            services.AddCors();
-
-            JsonConvert.DefaultSettings = () =>     new JsonSerializerSettings()
+            JsonConvert.DefaultSettings = () => new JsonSerializerSettings()
             {
                 ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                Formatting = Newtonsoft.Json.Formatting.Indented,
+                Formatting = Formatting.Indented,
                 NullValueHandling = NullValueHandling.Ignore,
             };
         }
