@@ -5,6 +5,7 @@ using Microsoft.Bot.Connector;
 using TestBot.ObjectsFromWit;
 using System.Collections.Generic;
 using System.Threading;
+using TestBot.Dialogs.Assets;
 
 namespace TestBot.Dialogs
 {
@@ -65,8 +66,11 @@ namespace TestBot.Dialogs
                     }
                     else if (item.value.ToLower() == "tidspunkt")
                     {
-                        var economyDialog = new EconomyDialog(message, witObjectStructure.data.entities.okonomi);
-                        context.Call(economyDialog, this.ResumeAfterChildDialog);
+                        foreach (var entity in witObjectStructure.data.entities.okonomi)
+                        {
+                            var economyDialog = new EconomyDialog(item.value.ToLower(), entity.value.ToLower());
+                            context.Call(economyDialog, this.ResumeAfterChildDialog);
+                        }
                     }
                     else
                         context.Wait(MessageReceivedAsync);

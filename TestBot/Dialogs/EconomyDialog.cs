@@ -4,55 +4,75 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using TestBot.ObjectsFromWit;
+using TestBot.Dialogs.Assets;
 
 namespace TestBot.Dialogs
 {
     [Serializable]
     public class EconomyDialog : IDialog<object>
     {
-        private string message;
         private string replyCheck = 
             "Lønn får du inn på konto den 20. hver måned. " +
             "Det finnes dog to unntak: dersom 20. faller på en helgedag vil lønnen komme fredagen før. " +
             "Dersom 20. faller på en rød dag, vil du få lønnen utbetalt i forkant, på siste ordinære arbeidsdag.";
         private string replyVacationMoney =
             "Feriepengene kommer aldri";
-        private string replyAskForMoreHelp = "Var det noe mer jeg kan hjelpe deg med?";
-        private Okonomi[] okonomi;
-     
-        public EconomyDialog(IMessageActivity message, Okonomi[] okonomi)
+        private string replyExpenses =
+            "Du har lagt ut 900kr for en middag for 1";
+        private string replyOldMoney =
+            "Pensjon er oppskrytt";
+        private string replyMoreHelp = "Var det noe mer jeg kan hjelpe deg med?";
+        private string type;
+        private Enums entityIndex;
+        public EconomyDialog(string type, string entity)
         {
-            this.message = message.Text.ToLower();
-            this.okonomi = okonomi;
+            this.type = type;
+            this.entityIndex = InitializeEnum(entity);
         }
+
+        private Enums InitializeEnum(string entity)
+        {
+            switch (entity)
+            {
+                case "utlegg": return Enums.Lønn;
+                case "pensjon": return Enums.Pensjon;
+                case "feriepenger": return Enums.Feriepenger;
+                case "lønn": return Enums.Lønn; 
+                default: return Enums.Tom; 
+            }
+        }
+        
 
         public async Task StartAsync(IDialogContext context)
         {
-            foreach(var item in okonomi)
+            switch(this.type)
             {
-                foreach(var lonn in item.Lonn)
-                {
-                    if (message.Contains(lonn))
-                    {
-                        await context.PostAsync(ReplyToUser(context, this.replyCheck));
-                        await context.PostAsync(ReplyToUser(context, this.replyAskForMoreHelp));
-                    }
-                }
-                foreach (var feriepenger in item.Feriepenger)
-                {
-                    if (message.Contains(feriepenger))
-                    {
-                        await context.PostAsync(ReplyToUser(context, this.replyVacationMoney));
-                        await context.PostAsync(ReplyToUser(context, this.replyAskForMoreHelp));
-                    }
-                }
+                case "tidspunkt": await context.PostAsync(ReplyToUser(context, this.entityIndex)); break;
+                default: await context.PostAsync("HÆ"); break;
             }
             context.Done<object>(new Object());
         }
-        private IMessageActivity ReplyToUser(IDialogContext context, string replyText)
+        private IMessageActivity ReplyToUser(IDialogContext context, Enums entity)
         {
             var reply = context.MakeMessage();
-            reply.Text = replyText;
+            switch(entity)
+            {
+                case Enums.Utlegg:
+                    reply.Text = replyExpenses;
+                    break;
+                case Enums.Lønn:
+                    reply.Text = replyCheck;
+                    break;
+                case Enums.Pensjon:
+                    reply.Text = replyOldMoney;
+                    break;
+                case Enums.Feriepenger:
+                    reply.Text = replyVacationMoney;
+                    break;
+                default:
+                    reply.Text = replyMoreHelp;
+                    break;
+            }
             return reply;
         }
     }
