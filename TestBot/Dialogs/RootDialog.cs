@@ -11,6 +11,7 @@ namespace TestBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
+        public string message { get; set; }
         public Task StartAsync(IDialogContext context)
         {
             context.PostAsync("[RootDialog]");
@@ -49,6 +50,11 @@ namespace TestBot.Dialogs
                     {
                         await ShowWelcomeModuleAsync(context);
                     }
+                    if (item.value.ToLower() == "bekreftelse")
+                    {
+                        await context.PostAsync("OK");
+
+                    }
                     else if (item.value.ToLower() == "plassering")
                     {
                         foreach (var entity in witObjectStructure.data.entities.gjenstand)
@@ -59,13 +65,8 @@ namespace TestBot.Dialogs
                     }
                     else if (item.value.ToLower() == "tidspunkt")
                     {
-                        foreach (var entity in witObjectStructure.data.entities.okonomi)
-                        {
-                            if (entity.value.ToLower() == "lønn")
-                            {
-                                context.Call(new EconomyDialog(), this.ResumeAfterChildDialog);
-                            }
-                        }
+                        var economyDialog = new EconomyDialog(message, witObjectStructure.data.entities.okonomi);
+                        context.Call(economyDialog, this.ResumeAfterChildDialog);
                     }
                     else
                         context.Wait(MessageReceivedAsync);
