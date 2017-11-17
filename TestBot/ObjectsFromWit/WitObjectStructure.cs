@@ -32,8 +32,7 @@ namespace TestBot.ObjectsFromWit
         {
             Id = wit.Msg_id;
             Text = wit._text;
-            Intents = wit.Entities?.Intent
-                .ToList()
+            Intents = wit.Entities?.Intent?
                 .Select(x => new Intent {Confidence = x.Confidence, Value = x.Value})
                 .ToList() ?? new List<Intent>();
             Entities = GetEntitiesFromWitEntities(wit.Entities);
@@ -77,7 +76,6 @@ namespace TestBot.ObjectsFromWit
             Type = wit.Type;
         }
     }
-
 
     public class WitObject
     {
