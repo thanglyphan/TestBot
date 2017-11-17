@@ -11,7 +11,6 @@ namespace TestBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
-        public string message { get; set; }
         public Task StartAsync(IDialogContext context)
         {
             context.PostAsync("[RootDialog]");
@@ -65,7 +64,7 @@ namespace TestBot.Dialogs
                     }
                     else if (item.value.ToLower() == "tidspunkt")
                     {
-                        var economyDialog = new EconomyDialog(message, witObjectStructure.data.entities.okonomi);
+                        var economyDialog = new EconomyDialog(activity, witObjectStructure.data.entities.okonomi);
                         context.Call(economyDialog, this.ResumeAfterChildDialog);
                     }
                     else
