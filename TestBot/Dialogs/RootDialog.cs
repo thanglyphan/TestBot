@@ -21,12 +21,8 @@ namespace TestBot.Dialogs
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
-            var message = await result;
             var activity = await result as Activity;
-            if (message.Text.ToLower().Equals("hjelp"))
-            {
-                await ShowOptionsAsync(context);
-            }
+
             var api = new Networking();
             var response = api.GetResponseForMessage(activity?.Text);
             Console.WriteLine(response);
@@ -46,27 +42,31 @@ namespace TestBot.Dialogs
             {
                 foreach (var item in messageIntent)
                 {
-                    if (item.value.ToLower() == "hilsen")
+                    if (item.value.ToLower() == "hjelp")
+                    {
+                        await ShowOptionsAsync(context);
+                    }
+                    else if (item.value.ToLower() == "hilsen")
                     {
                         await ShowWelcomeModuleAsync(context);
+                    }
+                    if (item.value.ToLower() == "bekreftelse")
+                    {
+                        await context.PostAsync("OK");
+
                     }
                     else if (item.value.ToLower() == "plassering")
                     {
                         foreach (var entity in witObjectStructure.data.entities.gjenstand)
                         {
                             if (entity.value.ToLower().Equals("cv"))
-                                context.Call(new DocumentFinderDialog(), this.ResumeAfterChildDialog);
+                                context.Call(new DocumentFinderDialog(), this.ResumeAfterDocumentFinderDialog);
                         }
                     }
                     else if (item.value.ToLower() == "tidspunkt")
                     {
-                        foreach (var entity in witObjectStructure.data.entities.okonomi)
-                        {
-                            if (entity.value.ToLower() == "lønn")
-                            {
-                                context.Call(new EconomyDialog(), this.ResumeAfterChildDialog);
-                            }
-                        }
+                        var economyDialog = new EconomyDialog(activity, witObjectStructure.data.entities.okonomi);
+                        context.Call(economyDialog, this.ResumeAfterChildDialog);
                     }
                     else
                         context.Wait(MessageReceivedAsync);
@@ -76,8 +76,16 @@ namespace TestBot.Dialogs
 
         private async Task ResumeAfterChildDialog(IDialogContext context, IAwaitable<object> result)
         {
+            await context.PostAsync("[RootDialog]");
             context.Wait(this.MessageReceivedAsync);
         }
+        private async Task ResumeAfterDocumentFinderDialog(IDialogContext context, IAwaitable<object> result)
+        {
+            await context.PostAsync("[RootDialog]");
+            await context.PostAsync("Hva annet kan jeg hjelpe deg med?");
+            context.Wait(this.MessageReceivedAsync);
+        }
+
         private async Task ShowWelcomeModuleAsync(IDialogContext context)
         {
             var images = new List<CardImage>();
