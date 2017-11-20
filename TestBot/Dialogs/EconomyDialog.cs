@@ -42,7 +42,6 @@ namespace TestBot.Dialogs
             }
         }
         
-
         public async Task StartAsync(IDialogContext context)
         {
             switch(this.type)
