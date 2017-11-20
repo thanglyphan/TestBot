@@ -100,8 +100,11 @@ namespace TestBot.Dialogs
                     }
                     else if (item.Value.ToLower() == "tidspunkt")
                     {
-                        var economyDialog = new EconomyDialog();
-                        context.Call(economyDialog, this.ResumeAfterChildDialog);
+                        foreach (var entity in witObject.Data.Entities.Okonomi)
+                        {
+                            var economyDialog = new EconomyDialog(item.Value.ToLower(), entity.Value.ToLower());
+                            context.Call(economyDialog, this.ResumeAfterChildDialog);
+                        }
                     }
                     else
                         context.Wait(MessageReceivedAsync);
