@@ -14,6 +14,35 @@ namespace TestBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
+        private string uncertainReply = "Nå forstod jeg ikke hva du mente. Kan du omformulere spørsmålet?";
+        private string additionalHelpReply = "Hva annet kan jeg hjelpe deg med?";
+        private string questionOrganization = "Jeg har et spørsmål om hvordan Creuna er organisert.";
+        private string questionEconomy = "Jeg har et spørsmål om min lønn, feriepenger, utlegg etc.";
+        private string questionDocumentCV = "Jeg lurer på hvor jeg finner Creuna CV’er.";
+        private string questionPrinterAndKeycard = "Jeg lurer på hvor jeg finner printer eller når jeg må bruke nøkkelkortet mitt.";
+        private string buttonTextOrganization = "Organisasjon";
+        private string thumbnailCardImageUrl = "https://avatars3.githubusercontent.com/u/6422482?s=400&v=4";
+        private string thumbnailCardImageAltText = "Nice picture of a bot. Stolen.";
+
+        private string welcomeButtonTextEconomy = "Ansatte økonomi";
+        private string welcomeButtonTextDocumentCV = "CV plassering";
+        private string welcomeButtonTextPrinterAndKeycard = "Printerlokasjon og nøkkelkortbruk";
+        private string welcomeCardTitle = "Hei, mitt navn er CreunaBot.";
+        private string welcomeCardSubtitle = "Hva kan jeg hjelpe deg med?";
+        private string welcomeCardText = "Jeg er programmert til å kunne gi noen svar på følgende temaer:";
+
+        private string helpCardTitle = "Hjelp";
+        private string helpCardSubtitle = "Hva sliter du med?";
+        private string helpCardText = "";
+        private string helpButtonTextCreuna = "Se hvem som er best";
+        private string helpButtonTextHumanHelp = "Få tak i et menneske";
+        private string helpButtonCreunaUrl = "https://www.creuna.com/no/";
+        private string helpButtonHumanOutput = "Jeg trenger et menneske som kan hjelpe meg.";
+        
+
+
+
+
         public Task StartAsync(IDialogContext context)
         {
             context.PostAsync("[RootDialog]");
@@ -47,7 +76,7 @@ namespace TestBot.Dialogs
             var messageIntent = witObject.Data?.Entities?.Intent;
             if (messageIntent == null)
             {
-                await context.PostAsync("Jeg forstår ikke hva du vil. Kan du omformulere spørsmålet?");
+                await context.PostAsync(uncertainReply);
             }
             else
             {
@@ -88,25 +117,25 @@ namespace TestBot.Dialogs
         private async Task ResumeAfterDocumentFinderDialog(IDialogContext context, IAwaitable<object> result)
         {
             await context.PostAsync("[RootDialog]");
-            await context.PostAsync("Hva annet kan jeg hjelpe deg med?");
+            await context.PostAsync(additionalHelpReply);
             context.Wait(this.MessageReceivedAsync);
         }
 
         private async Task ShowWelcomeModuleAsync(IDialogContext context)
-        {
+        { 
             var images = new List<CardImage>();
             var actions = new List<CardAction>();
             var ThumbnailCardGenerator = new ThumbnailCardGenerator();
             var thumbnailImage = ThumbnailCardGenerator
-                .CreateImage("https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "CreunaBot");
+                .CreateImage(thumbnailCardImageUrl, "CreunaBot");
             var organizationButton = ThumbnailCardGenerator
-                .CreateButton("imBack", "Organisasjon", "Jeg har et spørsmål om Creunas organisasjon.", "ButtonText", "DisplayText");
+                .CreateButton("imBack", buttonTextOrganization, questionOrganization, "ButtonText", "DisplayText");
             var economyButton = ThumbnailCardGenerator
-                .CreateButton("imBack", "Økonomi", "Jeg har et spørsmål om lønn, feriepenger, utlegg etc..", "ButtonText", "DisplayText");
+                .CreateButton("imBack", welcomeButtonTextEconomy, questionEconomy, "ButtonText", "DisplayText");
             var cvButton = ThumbnailCardGenerator
-                .CreateButton("imBack", "Hvor finner jeg CVer", "Jeg har spørsmål om hvor jeg finner en Creuna CV", "ButtonText", "DisplayText");
+                .CreateButton("imBack", welcomeButtonTextDocumentCV, questionDocumentCV, "ButtonText", "DisplayText");
             var itemButton = ThumbnailCardGenerator
-                .CreateButton("imBack", "Printer eller Nøkkelkort", "Jeg har spørsmål angående printer eller nøkkelkort.", "ButtonText", "DisplayText");
+                .CreateButton("imBack", welcomeButtonTextPrinterAndKeycard, questionPrinterAndKeycard, "ButtonText", "DisplayText");
             images.Add(thumbnailImage);
             actions.Add(organizationButton);
             actions.Add(economyButton);
@@ -114,7 +143,7 @@ namespace TestBot.Dialogs
             actions.Add(itemButton);
 
             var card = ThumbnailCardGenerator
-                .CreateThumbnailCard("Hei, mitt navn er CreunaBot.", "Hva kan jeg hjelpe deg med?", "Jeg er programmert til å kunne gi noen svar på følgende temaer:", images, actions);
+                .CreateThumbnailCard(welcomeCardTitle,welcomeCardSubtitle,welcomeCardText, images, actions);
             var attachment = ThumbnailCardGenerator
                 .ComposeAttachment(card, ThumbnailCard.ContentType);
             var reply = context.MakeMessage();
@@ -127,13 +156,13 @@ namespace TestBot.Dialogs
             var actions = new List<CardAction>();
             var ThumbnailCardGenerator = new ThumbnailCardGenerator();
             var thumbnailImage = ThumbnailCardGenerator
-                .CreateImage("https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "nice picture of a bot");
+                .CreateImage(thumbnailCardImageUrl, thumbnailCardImageAltText);
             var pictureButton = ThumbnailCardGenerator
-                .CreateButton("openUrl", "GitBot", "https://avatars3.githubusercontent.com/u/6422482?s=400&v=4", "ButtonText", "DisplayText");
+                .CreateButton("openUrl", "GitBot", thumbnailCardImageUrl, "ButtonText", "DisplayText");
             var wikiButton = ThumbnailCardGenerator
-                .CreateButton("openUrl", "Se hvem som er best", "https://www.creuna.com/no/", "ButtonText", "DisplayText");
+                .CreateButton("openUrl", helpButtonTextCreuna, helpButtonCreunaUrl, "ButtonText", "DisplayText");
             var contactHumanButton = ThumbnailCardGenerator
-                .CreateButton("imBack", "Få tak i et menneske", "Jeg trenger et menneske som kan hjelpe meg.", "ButtonText", "DisplayText");
+                .CreateButton("imBack", helpButtonTextHumanHelp, helpButtonHumanOutput, "ButtonText", "DisplayText");
 
             images.Add(thumbnailImage);
             actions.Add(pictureButton);
@@ -141,7 +170,7 @@ namespace TestBot.Dialogs
             actions.Add(contactHumanButton);
 
             var card = ThumbnailCardGenerator
-                .CreateThumbnailCard("Hjelp", "Hva sliter du med?", "text", images, actions);
+                .CreateThumbnailCard(helpCardTitle,helpCardSubtitle,helpCardText, images, actions);
             var attachment = ThumbnailCardGenerator
                 .ComposeAttachment(card, ThumbnailCard.ContentType);
             var reply = context.MakeMessage();
