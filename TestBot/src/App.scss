@@ -1,106 +1,109 @@
 body{
-  background-color: salmon;
+  background-color: #6900aa;
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+}
+
+p{
+  margin: 0;
 }
 
 .App {
   text-align: center;
-}
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
+  .App-header {
+    background-color: #222;
+    color: white;
+    box-shadow: 0px 40px 10px red;
+    padding: 20px 20px 80px 20px;
 
-.App-title {
-  font-size: 1.5em;
-}
-
-.App-intro {
-  font-size: large;
-}
-
-.mainContainer{
-  width: 100%;
-}
-
-.form{
-  width: 100%;
-  padding: 20px 0;
-
-  .textInput{
-    display: block;
-    min-width: 60%;
-    max-width: 60%;
-    min-height: 60px;
-    margin: 20px auto;
-    font-size: 24px;
-    padding: 10px;
-    border-radius: 10px;
-
-    &::placeholder{
-      animation: wave;
-      animation-duration: 3s;
-      /*animation-iteration-count: infinite;
-      animation-direction: alternate;*/
-      color: red;
-      transition: opacity 0.35s ease-in-out;
+    .App-title {
+      font-size: 2.5em;
     }
   }
 
-  @keyframes wave {
-    from {
-          color: red;
-        }
-    to   {
-        color: blue;
-        }
-  }
-
-  @keyframes fadeIn {
-    from { opacity: 0}
-    to { opacity: 1}
-  }
-
-  .submitBtn{
-    position: relative;
-    font-size: 24px;
-    height: 40px;
-    width: 70px;
-    background: #FFF;
-    border: none;
-    border-radius: 50px;
-    width: 100px;
-    height: 100px;
-    box-shadow: 0px 3px 15px #666;
-    background: radial-gradient(#fff 15%, #eee 40%, #ccc 90%); /* Standard syntax */
-    animation: wave;
-    animation-duration: 3s;
-
-    &:hover{
-      cursor: pointer;
-    }
-
-    &:active{
-      bottom: -2px;
-    }
-
-    &:focus{
-      outline: none;
-    }
-  }
-
-  .recentQuestions{
-    align-items: flex-start;
-    padding: 0 20px;
-    width: 600px;
+  .desc{
+    width: 60%;
     margin: 0 auto;
+    font-size: 1.2em;
+    text-align: left;
+    color: white;
 
-    li{
-      font-size: 18px;
-      text-align: left;
-      padding: 4px 0;
+    .intent{
+      font-style: normal;
+      color: #f4d863;
+    }
+
+    .category{
+      font-style: normal;
+      color: #15d63a;
+    }
+  }
+
+
+
+  .mainContainer{
+    width: 100%;
+    padding: 80px 0 100px 0px;
+    background-color: #333;
+    box-shadow: 0px 10px 40px #222;
+    color: #fff;
+  }
+
+  .form{
+    .textInput{
+      display: block;
+      min-width: 60%;
+      max-width: 60%;
+      min-height: 60px;
+      margin: 20px auto;
+      font-size: 24px;
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .textInput.fail::placeholder{
+      color: red !important;
+      animation-name: "test";
+      animation-duration: 4s;
+    }
+
+    .submitBtn{
+      position: relative;
+      font-size: 24px;
+      border: none;
+      width: 120px;
+      height: 50px;
+      box-shadow: 0px 3px 15px #666;
+      background: #fff;
+      background: radial-gradient(#fff 15%, #eee 40%, #ccc 90%);
+
+      &:hover{
+        cursor: pointer;
+        background: white;
+      }
+
+      &:active{
+        bottom: -2px;
+      }
+
+      &:focus{
+        outline: none;
+      }
+    }
+    .recentQuestions{
+      align-items: flex-start;
+      padding: 0 20px;
+      width: 600px;
+      margin: 0 auto;
+
+      li{
+        list-style-type: none;
+        font-size: 18px;
+        text-align: left;
+        padding: 4px 0;
+      }
     }
   }
 }

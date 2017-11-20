@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios'
-import './App.css';
+import './App.min.css';
 
 import Fakebot from "./Fakebot"
 
@@ -37,23 +37,32 @@ class App extends Component {
         <header className="App-header">
           <h1 className="App-title">Chatbot Trainer!</h1>
           <div className="desc">
-            <p> Vi er trainee gruppe A som igjennom hospitering i tech avdelingen har fått i oppgave å lage en basisløsning for chatbot.
-                Noe som vi potensielt kan selge til kunder på senere tidspunkt.
+            <p> Gjennom hospitering i teknologiavdelingen fikk traineegruppe A i oppgave å lage en basisløsning for Creunas helt egne chatbot.
+              Løsningen tar utgangspunkt i å kunne bli solgt til kunder i nær fremtid.
               <br/><br/>
-                Ettersom folk generelt skriver veldig ulikt og formulerer seg anderledes er det viktig å trene en chatbot så den forstår hva en bruker ønsker, samme hvordan en person ordlegger seg.
-                Det å trene en chatbot er derfor en omfattende jobb, og vi trenger derfor deres hjelp til å formulere spørsmål.
+                Menneskers måter å uttrykke seg på varierer i stor grad.
+                Vi snakker ulikt, vi skriver ulikt, vi forstår ulikt.
+                Ja – vi kommuniserer ulikt.
+                Det kanskje viktigste arbeidet rundt utviklingen av en chatbot er derfor å trene den opp.
+                Mer konkret trener vi den slik at den forstår hva en bruker søker svar på ved å bruke chatboten, samme hvordan denne brukeren ordlegger seg.
+                Til dette arbeidet søker vi deres hjelp.
             </p>
           </div>
         </header>
         <div className="mainContainer">
           <div className="desc">
-            <p> Til å begynne med har vi bestemt oss for å trene bot'en for HR relaterte spørsmål.
-                Vi håper at noen av dere har lyst til å skrive noen spørsmål i boksen nedenfor relatert til dette.
-                Disse spørsmålene blir sendt til vår Wit.ai konto, hvor bot'en foreslår meningen bak spørsmålet og hvilken kategori spørsmålet tilhører.
+            <p> Med et mål om at chatboten svarer virkelighetens brukere så godt som mulig på deres behov, trenger vi at dere skriver til oss hvordan dere ville stilt spørsmål under et valgt tema.
+              Til å begynne med har vi bestemt oss for å trene bot'en for HR relaterte spørsmål.
+              Spørsmålene du skriver i boksen under blir sendt til vår Wit.ai konto, hvor bot'en foreslår meningen bak spørsmålet og hvilken kategori spørsmålet tilhører.
+              <br/><br/>
+              Merk: ikke tenk på formuleringen din. Vi vil ha ekte spørsmål.
+              Gjerne de du skriver nettopp uten å tenke – annet enn at du tenker du trenger svar på noe. Skriv nat
                 <br/><br/>
-                Eksempel på hvordan bot'en fungerer: <br/> "Hvor <i className="intent">mange</i> <i className="category">feriedager</i> har jeg igjen?"
+                Eksempel på hvordan bot'en fungerer: "Hvor <i className="intent">mange</i> <i className="category">feriedager</i> har jeg igjen?"
                 <br/><br/>
-                Bot'en identifiserer: <br/> mening: <i className="intent">antall</i><br/> kategori: <i className="category">feriedager</i>
+                Bot identifiserer: <br/>
+                &nbsp;&nbsp;&nbsp;&ndash; mening: <i className="intent">antall</i><br/>
+                &nbsp;&nbsp;&nbsp;&ndash; kategori: <i className="category">feriedager</i>
                 <br/><br/>
                 Forslag til flere spørsmål: Adresse, ansatte, cv, sykedager, printer, åpningstider etc.
             </p>
