@@ -1,112 +1,66 @@
-﻿using System;
-using System.Linq;
-using System.Text.RegularExpressions;
-using System.Web.Script.Serialization;
+﻿using System.Web.Script.Serialization;
+using Newtonsoft.Json;
 
 namespace TestBot.ObjectsFromWit
 {
-
     public class WitObjectStructure
     {
-        public WitObject data = new WitObject();
-        public WitObjectStructure() { }
+        public WitObject Data;
+
         public WitObjectStructure(string json)
         {
-            string pattern = @"[\""]?entities[\""]?(\s+)?(:)?(\s+)?{\n\s+\""\w+\""";
-            string replacementPattern = @"[\""]?entities[\""]?(\s+)?(:)?(\s+)?{\n\s+\""Test\""";
             var inputString = json;
+            var serializer = new JavaScriptSerializer();
+            Data = (WitObject)serializer.Deserialize(inputString, typeof(WitObject));
+        }
 
-            Regex regex = new Regex(pattern);
-            Match match = regex.Match(inputString);
-            Console.WriteLine(match.Value);
-
-            var final = inputString.Replace(pattern, replacementPattern);
-            Console.WriteLine(final);
-            JavaScriptSerializer serializer = new JavaScriptSerializer();
-            this.data = (WitObject)serializer.Deserialize(inputString, typeof(WitObject));
+        public static string DataAsJson(WitObject data)
+        {
+            return JsonConvert.SerializeObject(data);
         }
     }
 
     public class WitObject
     {
-        public string msg_id { get; set; }
+        public string Msg_id { get; set; }
         public string _text { get; set; }
-        public Entities entities { get; set; }
-        public WitObject() { }
+        public WitEntities Entities { get; set; }
     }
 
-    public class Entities
+    public class WitEntities
     {
-        public Test[] test { get; set; }
-        public Intent[] intent { get; set; }
-        public Organisasjon[] organisasjon { get; set; }
-        public Okonomi[] okonomi { get; set; }
-        public Gjenstand[] gjenstand { get; set; }
+        public WitIntent[] Intent { get; set; }
+        public WitOrganisasjon[] Organisasjon { get; set; }
+        public WitOkonomi[] Okonomi { get; set; }
+        public WitGjenstand[] Gjenstand { get; set; }
     }
-    public class Gjenstand : CategoryBase
+
+    public class WitGjenstand : WitCategoryBase
     {
         public override string Name => "Gjenstand";
-        public override string GetResponse(Intent intent)
-        {
-            return "Leter du etter en gjenstand?";
-        }
-    }
-    public class Test:CategoryBase
-    {
-        public override string Name => "Test";
-
-        public override string GetResponse(Intent intent)
-        {
-            return "Test vellykket";
-        }
     }
 
-    public class Okonomi:CategoryBase
+    public class WitOkonomi : WitCategoryBase
     {
         public override string Name => "Okonomi";
-        public string[] Lonn = new[] { "lønn", "lønning", "lønnsutbetaling" , "lønna"};
-        public string[] Feriepenger = new[] { "feriepenger", "feriepenga", "ferie-penger" };
-        public string[] Mengde = new[] { "mye", "masse", "mange" };
-
-        public override string GetResponse(Intent intent)
-        {
-            if (Lonn.Contains(value.ToLower()))
-            {
-                if (intent.value.Equals("Tidspunkt"))
-                    return "Lønnen kommer den 20de hver måned";
-                if (intent.value.Equals("Mengde"))
-                    return "Mer enn nok";
-            }
-            else if (Feriepenger.Contains(value.ToLower())) {
-
-            }
-            
-            return "Nå skjønte jeg ikke hva du mente. Kan du omformulere spørsmålet?";
-        }
     }
 
-    public class Organisasjon: CategoryBase
+    public class WitOrganisasjon : WitCategoryBase
     {
         public override string Name => "Organisasjon";
-
-        public override string GetResponse(Intent intent)
-        {
-            return "Velkommen til Creuna :)";
-        }
     }
 
-    public class Intent
+    public class WitIntent
     {
-        public float confidence { get; set; }
-        public string value { get; set; }
+        public float Confidence { get; set; }
+        public string Value { get; set; }
     }
 
-    public abstract class CategoryBase
+    public abstract class WitCategoryBase
     {
-        public abstract string GetResponse(Intent intent);
         public abstract string Name { get; }
-        public float confidence { get; set; }
-        public string value { get; set; }
-        public string type { get; set; }
+        public float Confidence { get; set; }
+        public string Value { get; set; }
+        public string Type { get; set; }
     }
 }

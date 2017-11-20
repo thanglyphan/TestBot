@@ -25,15 +25,15 @@ namespace TestBot.Dialogs
             var api = new Networking();
             var response = api.GetResponseForMessage(message?.Text);
             var witObjectStructure = new WitObjectStructure(response);
-            var messageIntent = witObjectStructure.data.entities.intent;
+            var messageIntent = witObjectStructure.Data.Entities.Intent;
 
             foreach (var item in messageIntent)
-                if (item.value.ToLower().Equals("bekreftelse"))
+                if (item.Value.ToLower().Equals("bekreftelse"))
                 {
                     await context.PostAsync("Hvem sin CV ønsker du å finne?");
                     context.Wait(SearchQuery);
                 }
-                else if (item.value.ToLower().Equals("avkreftelse"))
+                else if (item.Value.ToLower().Equals("avkreftelse"))
                 {
                     await context.PostAsync("Den er grei.");
                     context.Done<object>(null);
@@ -60,14 +60,14 @@ namespace TestBot.Dialogs
             var api = new Networking();
             var response = api.GetResponseForMessage(confirm?.Text);
             var witObjectStructure = new WitObjectStructure(response);
-            var messageIntent = witObjectStructure.data.entities.intent;
+            var messageIntent = witObjectStructure.Data.Entities.Intent;
             foreach (var item in messageIntent)
-                if (item.value.ToLower().Equals("bekreftelse"))
+                if (item.Value.ToLower().Equals("bekreftelse"))
                 {
                     await context.PostAsync("Hvilken CV skal jeg finne denne gangen?");
                     context.Wait(SearchQuery);
                 }
-                else if (item.value.ToLower().Equals("avkreftelse"))
+                else if (item.Value.ToLower().Equals("avkreftelse"))
                 {
                     await context.PostAsync("Den er grei!");
                     context.Done<object>(null);
