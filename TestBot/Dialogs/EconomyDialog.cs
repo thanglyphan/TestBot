@@ -55,6 +55,8 @@ namespace TestBot.Dialogs
         private async Task GetPostAsync(IDialogContext context, Enums entityType)
         {
             await context.PostAsync(ReplyToUser(context, entityType));
+            await context.PostAsync(ReplyToUser(context, 0));
+
         }
 
         private IMessageActivity ReplyToUser(IDialogContext context, Enums entity)
