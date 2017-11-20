@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 
 namespace TestBot.Dialogs.Assets
 {
-
     [Flags]
     public enum Enums
     {
