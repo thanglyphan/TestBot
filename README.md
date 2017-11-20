@@ -12,7 +12,10 @@ These instructions will get you a copy of the project up and running on your loc
 What things you need to install the software and how to install them
 
 ```
-Give examples
+Software required to debug and run the bot:
+  * Bot framework - (https://github.com/Microsoft/BotFramework-Emulator/releases)
+  * Visual studio - (https://www.visualstudio.com/downloads/)
+  * Windows to build project on Visual studio.
 ```
 
 ### Installing
@@ -22,13 +25,19 @@ A step by step series of examples that tell you have to get a development env ru
 Say what the step will be
 
 ```
-Give the example
+  * Clone or download the repo.
+  * Start bot_framework.exe.
+  * Build the application on Visual Studio.
+  * Copy the applications IP-address. Often "http://localhost:51002/api/messages"
+  * Add the IP-address to the bot_framework.exe URL field and click connect.
 ```
 
 And repeat
 
 ```
-until finished
+  * Chat with the bot!
+  
+  Try saying "hi", the chatbot will give you a list of categories available to ask for!
 ```
 
 End with an example of getting some data out of the system or using it for a little demo
