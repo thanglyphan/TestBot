@@ -52,19 +52,19 @@ class App extends Component {
         <div className="mainContainer">
           <div className="desc">
             <p> Med et mål om at chatboten svarer virkelighetens brukere så godt som mulig på deres behov, trenger vi at dere skriver til oss hvordan dere ville stilt spørsmål under et valgt tema.
-              Til å begynne med har vi bestemt oss for å trene bot'en for HR relaterte spørsmål.
+              Til å begynne med har vi bestemt oss for å trene bot'en på interne spørsmål i Creuna.
               Spørsmålene du skriver i boksen under blir sendt til vår Wit.ai konto, hvor bot'en foreslår meningen bak spørsmålet og hvilken kategori spørsmålet tilhører.
               <br/><br/>
               Merk: ikke tenk på formuleringen din. Vi vil ha ekte spørsmål.
-              Gjerne de du skriver nettopp uten å tenke – annet enn at du tenker du trenger svar på noe. Skriv nat
+              Gjerne de du skriver nettopp uten å tenke – annet enn at du tenker du trenger svar på noe. Skriv naturlig.
                 <br/><br/>
-                Eksempel på hvordan bot'en fungerer: "Hvor <i className="intent">mange</i> <i className="category">feriedager</i> har jeg igjen?"
+                Eksempel på hvordan bot'en fungerer: "<i className="intent">Hvor finner</i> jeg <i className="category">CV'en</i> min?"
                 <br/><br/>
                 Bot identifiserer: <br/>
-                &nbsp;&nbsp;&nbsp;&ndash; mening: <i className="intent">antall</i><br/>
-                &nbsp;&nbsp;&nbsp;&ndash; kategori: <i className="category">feriedager</i>
+                &nbsp;&nbsp;&nbsp;&ndash; mening: <i className="intent">plassering</i><br/>
+                &nbsp;&nbsp;&nbsp;&ndash; kategori: <i className="category">gjenstand</i>
                 <br/><br/>
-                Forslag til flere spørsmål: Adresse, ansatte, cv, sykedager, printer, åpningstider etc.
+                Forslag til flere spørsmål: Fagområder, ansatte, cv, nøkkelkort, printer, åpningstider etc.
             </p>
           </div>
           <form className="form" onSubmit={e => this.onSubmit(e)}>
